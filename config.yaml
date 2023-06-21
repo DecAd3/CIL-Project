@@ -1,0 +1,17 @@
+args:
+  training_args:
+    train_data: ./data/data_train.csv
+    test_save_dir: ./logs/output
+    model_load_path: ./models
+    model_save_path: ./models
+    random_seed: 0
+    device: "cpu"
+  experiment_args:
+    model_name: "model_1"
+    param_1: ...
+
+
+
+
+
+
