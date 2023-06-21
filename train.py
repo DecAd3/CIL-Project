@@ -1,7 +1,7 @@
 import sys
 import yaml
 import argparse
-from utils import load_data, mean_impute
+from utils import _read_df_in_format, _convert_df_to_matrix, preprocess
 
 
 def process_config(path):
@@ -18,6 +18,8 @@ def process_config(path):
     args.model_save_path = training_args['model_save_path']
     args.random_seed = training_args['random_seed']
     args.device = training_args['device']
+    args.normalization = training_args['normalization']
+    args.imputation = training_args['imputation']
 
     experiment_args = data['args']['experiment_args']
     args.model_name = experiment_args['model_name']
@@ -27,8 +29,9 @@ def process_config(path):
 
 
 def train(args):
-    data = load_data(args.train_data)
-    data = mean_impute(data)
+    df = _read_df_in_format(args.train_data)
+    data, is_provided = _convert_df_to_matrix(df, 10000, 1000)
+    data = preprocess(data, 10000, 1000)
 
 
 if __name__ == '__main__':

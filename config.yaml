@@ -6,6 +6,8 @@ args:
     model_save_path: ./models
     random_seed: 0
     device: "cpu"
+    imputation: "zero"
+    normalization: "zscore"
   experiment_args:
     model_name: "model_1"
     param_1: ...
