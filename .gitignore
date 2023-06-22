@@ -9,3 +9,6 @@
 
 # output
 /output
+
+# pycache
+/__pycache__
