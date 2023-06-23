@@ -5,6 +5,7 @@ from sklearn.model_selection import train_test_split
 
 from utils import _read_df_in_format
 from SVD_model import SVD_model
+from SVDPP_model import SVDPP_model
 
 
 def process_config(path):
@@ -48,7 +49,7 @@ def train(args):
     if args.model_name == 'svd':
         model = SVD_model(args)
     elif args.model_name == 'svd++':
-        pass
+        model = SVDPP_model(args)
     elif args.model_name == 'isvd':
         pass
     elif args.model_name == 'als':

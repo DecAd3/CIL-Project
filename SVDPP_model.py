@@ -1,22 +1,22 @@
 import numpy as np
-from utils import _load_data_for_surprise
+from utils import _load_data_for_surprise, _convert_df_to_matrix
 import os
 from surprise import SVDpp
 from surprise.model_selection import KFold
 from surprise.model_selection import cross_validate
 import pandas as pd
 
-class SVDPP:
+class SVDPP_model:
     def __init__(self, args):
         '''
         Model for Singular Value Decomposition Plus Plus(SVDPP)
         '''
-        self.test_path = args.test_data
         self.algo = None
         self.out_path = './output/svdpp.csv'
 
-    def fit(self, data_matrix):
-        data = _load_data_for_surprise(data_matrix)
+    def fit(self, df_train):
+        data_train, _ = _convert_df_to_matrix(df_train, 10000, 1000)
+        data = _load_data_for_surprise(data_train)
 
         trainset = data.build_full_trainset()
 
@@ -26,10 +26,10 @@ class SVDPP:
 
         self.algo = algorithm
 
-    def predict(self):
+    def predict(self, df_test):
         with open(self.out_path, 'w+') as f:
             f.write('Id,Prediction\n')
-            test = pd.read_csv(self.test_path)
+            test = df_test
             for id in test['Id']:
                 row, col = id.split('_')
                 row = int(row[1:])
