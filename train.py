@@ -1,7 +1,8 @@
 import sys
 import yaml
 import argparse
-from utils import _read_df_in_format, _convert_df_to_matrix, preprocess
+from utils import _read_df_in_format, _convert_df_to_matrix, preprocess, postprocess
+from ALS import ALS
 
 
 def process_config(path):
@@ -32,8 +33,13 @@ def train(args):
     df = _read_df_in_format(args.train_data)
     data, is_provided = _convert_df_to_matrix(df, 10000, 1000)
     data = preprocess(data, 10000, 1000)
-
+    trainer = ALS(data.shape[0], data.shape[1], 10, 10, 0.01)
+    trainer.fit(data, is_provided)
+    result = trainer.predict()
+    result = postprocess(result)
 
 if __name__ == '__main__':
-    args = process_config(sys.argv[1])
+    config_path = 'D:/ETH/2023HS-CIL/CIL-Project/config.yaml'
+    args = process_config(config_path)
+    # args = process_config(sys.argv[1])
     train(args)

@@ -32,6 +32,13 @@ def preprocess(arr, n_row, n_col):
     normalized = (masked - u_cols) / std_cols
     return normalized.data
 
+def postprocess(arr, predicted, n_row, n_col, min_rate = 1, max_rate = 5):
+    masked = np.ma.masked_equal(arr, 0)
+    u_cols = np.tile(np.ma.mean(masked, axis=0).data, (n_row, 1))
+    std_cols = np.tile(np.ma.std(masked, axis=0).data, (n_row, 1))
+    denormalized_predicted = predicted * std_cols + u_cols
+    clipped_predicted = np.clip(denormalized_predicted, min_rate, max_rate)
+    return clipped_predicted
 
 def train():
     pass
