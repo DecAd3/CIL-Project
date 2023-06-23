@@ -20,7 +20,7 @@ class ALS_model:
     def train(self, df_train):
         np.random.seed(self.seed_value)
         train_data, is_provided = _convert_df_to_matrix(df_train, self.num_users, self.num_items)
-        train_data, _, data_mean, data_std = preprocess(train_data, self.num_users, self.num_items, self.imputation)
+        train_data, data_mean, data_std = preprocess(train_data, self.num_users, self.num_items, self.imputation)
         # Initialize user and item latent factor matrices        
         U, sigma, VT = np.linalg.svd(train_data)
         user_factors = U[:, :self.latent_dim]

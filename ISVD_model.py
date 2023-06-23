@@ -9,8 +9,8 @@ class ISVD_model:
 
     def train(self, df_train):
         print("Start training Iterative-SVD model ...")
-        data_train, _ = _convert_df_to_matrix(df_train, 10000, 1000)
-        data_train, mask_train, mean_train, std_train = preprocess(data_train, 10000, 1000, self.args.imputation)
+        data_train, mask_train = _convert_df_to_matrix(df_train, 10000, 1000)
+        data_train, mean_train, std_train = preprocess(data_train, 10000, 1000, self.args.imputation)
 
         if self.args.isvd_type == "svp":
             print("Iterative-SVD model: Singular Value Projection. ")

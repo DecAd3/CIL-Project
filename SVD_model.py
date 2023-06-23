@@ -10,7 +10,7 @@ class SVD_model:
     def train(self, df_train):
         print("Start training SVD model ...")
         data_train, _ = _convert_df_to_matrix(df_train, 10000, 1000)
-        data_train, _, mean_train, std_train = preprocess(data_train, 10000, 1000, self.args.imputation)
+        data_train, mean_train, std_train = preprocess(data_train, 10000, 1000, self.args.imputation)
 
         U, sigma_vec, VT = np.linalg.svd(data_train, full_matrices=False)
         Sigma = np.zeros((1000, 1000))

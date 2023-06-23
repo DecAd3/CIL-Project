@@ -70,7 +70,7 @@ def preprocess(arr, n_row, n_col, imputation):
     elif imputation == "mean":
         imputed_arr = mean_cols * (normalized_arr == 0) + arr * (normalized_arr != 0)
 
-    return imputed_arr, mask_arr, mean_cols, std_cols
+    return imputed_arr, mean_cols, std_cols
 
 
 def compute_rmse(predictions, labels):
