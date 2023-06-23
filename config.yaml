@@ -7,14 +7,18 @@ args:
     model_save_path: ./models
     random_seed: 42
     device: "cpu"
-    imputation: "zero"
+    imputation: "mean"
     normalization: "zscore"
   experiment_args:
-    model_name: "svd"
+    model_name: "isvd"
     save_predictions: False
     predictions_folder: "predictions"
   svd_args:
     svd_rank: 9
+  isvd_args:
+    num_iter: 15
+    shrinkage: 38
+
 
 
 

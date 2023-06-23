@@ -52,17 +52,20 @@ def _load_data_for_surprise(data_matrix):
     return data_surprise
 
 def preprocess(arr, n_row, n_col, imputation):
+    ### Column Normalize
     masked = np.ma.masked_equal(arr, 0)
-    col_mean = np.tile(np.ma.mean(masked, axis=0).data, (n_row, 1))
-    col_std = np.tile(np.ma.std(masked, axis=0).data, (n_row, 1))
-    normalized_cols = ((masked - col_mean) / col_std).data
+    mean_cols = np.tile(np.ma.mean(masked, axis=0).data, (n_row, 1))
+    std_cols = np.tile(np.ma.std(masked, axis=0).data, (n_row, 1))
+    normalized_arr = ((masked - mean_cols) / std_cols).data
+    mask_arr = normalized_arr != 0
 
+    ### Imputation
     if imputation == "zero":
-        imputed = np.nan_to_num(normalized_cols, nan=0.0)
+        imputed_arr = normalized_arr
     elif imputation == "mean":
-        pass
+        imputed_arr = mean_cols * (normalized_arr == 0) + arr * (normalized_arr != 0)
 
-    return imputed, col_mean.data, col_std.data
+    return imputed_arr, mask_arr, mean_cols, std_cols
 
 
 def compute_rmse(predictions, labels):

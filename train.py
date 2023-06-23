@@ -6,6 +6,7 @@ from sklearn.model_selection import train_test_split
 from utils import _read_df_in_format
 from SVD_model import SVD_model
 from SVDPP_model import SVDPP_model
+from ISVD_model import ISVD_model
 
 
 def process_config(path):
@@ -37,7 +38,10 @@ def process_config(path):
     svd_args = data['args']['svd_args']
     args.svd_rank = svd_args['svd_rank']
 
-    # XXX arguments
+    # ISVD arguments
+    isvd_args = data['args']['isvd_args']
+    args.num_iter = isvd_args['num_iter']
+    args.shrinkage = isvd_args['shrinkage']
 
     return args
 
@@ -51,10 +55,11 @@ def train(args):
     elif args.model_name == 'svd++':
         model = SVDPP_model(args)
     elif args.model_name == 'isvd':
-        pass
+        model = ISVD_model(args)
     elif args.model_name == 'als':
         pass
 
+    print("Model:", args.model_name)
     model.train(df_train)
     model.predict(df_test)
 
