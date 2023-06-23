@@ -58,6 +58,7 @@ def _load_data_for_surprise(df):
 def preprocess(arr, n_row, n_col, imputation):
     ### Column Normalization
     masked = np.ma.masked_equal(arr, 0)
+    # to check: mean along row / col have effects on results?
     mean_cols = np.tile(np.ma.mean(masked, axis=0).data, (n_row, 1))
     std_cols = np.tile(np.ma.std(masked, axis=0).data, (n_row, 1))
     normalized_arr = ((masked - mean_cols) / std_cols).data
@@ -75,6 +76,10 @@ def preprocess(arr, n_row, n_col, imputation):
 def compute_rmse(predictions, labels):
     return math.sqrt(mean_squared_error(predictions, labels))
 
+def postprocess(raw_predictions, data_mean, data_std, min_rate = 1, max_rate = 5):
+    denormalized_predictions = raw_predictions * data_std + data_mean
+    clipped_predicted = np.clip(denormalized_predictions, min_rate, max_rate)
+    return clipped_predicted
 
 def train():
     pass

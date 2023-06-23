@@ -1,6 +1,8 @@
 args:
   training_args:
     train_data: ./data/data_train.csv
+    num_users: 10000
+    num_items: 1000
     test_size: 0.1
     test_save_dir: ./logs/output
     model_load_path: ./models
@@ -9,12 +11,20 @@ args:
     device: "cpu"
     imputation: "mean"
     normalization: "zscore"
+    min_rate: 1
+    max_rate: 5
   experiment_args:
     model_name: "isvd"
     save_predictions: False
     predictions_folder: "predictions"
+    verbose: True
   svd_args:
     svd_rank: 9
+  als_args:
+    svd_rank: 9
+    num_iterations: 20
+    reg_param: 0.2
+    latent_dim: 3
   isvd_args:
     isvd_iter: 15
     isvd_type: "nnr" # svp: Singular Value Projection, nnr: Nuclear Norm Relaxation
