@@ -7,6 +7,8 @@ from sklearn.model_selection import train_test_split
 
 from utils import _read_df_in_format
 from SVD_model import SVD_model
+from SVDPP_model import SVDPP_model
+from ISVD_model import ISVD_model
 
 
 def process_config(path):
@@ -48,6 +50,11 @@ def process_config(path):
     args.als_args.num_iterations = als_args['num_iterations']
     args.als_args.reg_param = als_args['reg_param']
     args.als_args.latent_dim = als_args['latent_dim']
+    
+    # ISVD arguments
+    isvd_args = data['args']['isvd_args']
+    args.num_iter = isvd_args['num_iter']
+    args.shrinkage = isvd_args['shrinkage']
 
     # XXX arguments
     return args
@@ -61,12 +68,13 @@ def train(args):
     if args.model_name == 'svd':
         model = SVD_model(args)
     elif args.model_name == 'svd++':
-        pass
+        model = SVDPP_model(args)
     elif args.model_name == 'isvd':
-        pass
+        model = ISVD_model(args)
     elif args.model_name == 'als':
         model = ALS_model(args)
 
+    print("Model:", args.model_name)
     model.train(df_train)
     model.predict(df_test=df_test)
 

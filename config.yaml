@@ -9,12 +9,12 @@ args:
     model_save_path: ./models
     random_seed: 42
     device: "cpu"
-    imputation: "zero"
+    imputation: "mean"
     normalization: "zscore"
     min_rate: 1
     max_rate: 5
   experiment_args:
-    model_name: "als"
+    model_name: "isvd"
     save_predictions: False
     predictions_folder: "predictions"
     verbose: True
@@ -25,6 +25,10 @@ args:
     num_iterations: 20
     reg_param: 0.2
     latent_dim: 3
+  isvd_args:
+    num_iter: 15
+    shrinkage: 38
+
 
 
 

@@ -1,5 +1,7 @@
 import numpy as np
 import pandas as pd
+from surprise import Dataset
+from surprise import Reader
 import math
 from sklearn.metrics import mean_squared_error
 
@@ -27,19 +29,47 @@ def _convert_df_to_matrix(df, n_row, n_col):
     return data_matrix, is_provided
 
 
+def _load_data_for_surprise(df):
+    itemID = []
+    userID = []
+    rating = []
+
+    UIDs = df['row'].to_numpy()
+    IIDs = df['col'].to_numpy()
+    PREDs = df['Prediction'].to_numpy()
+
+    for i in range(df.shape[0]):
+        userID.append(UIDs[i]-1)
+        itemID.append(IIDs[i]-1)
+        rating.append(PREDs[i])
+    
+    ratings_dict = {'itemID': itemID,
+                    'userID': userID,
+                    'rating': rating}
+    df = pd.DataFrame(ratings_dict)
+
+    # The columns must correspond to user id, item id and ratings (in that order).
+    reader = Reader(rating_scale=(1, 5))
+    data_surprise = Dataset.load_from_df(df[['userID', 'itemID', 'rating']], reader=reader)
+
+    return data_surprise
+
 def preprocess(arr, n_row, n_col, imputation):
+    ### Column Normalize
     masked = np.ma.masked_equal(arr, 0)
     # to check: mean along row / col have effects on results?
-    col_mean = np.tile(np.ma.mean(masked, axis=0).data, (n_row, 1))
-    col_std = np.tile(np.ma.std(masked, axis=0).data, (n_row, 1))
-    normalized_cols = ((masked - col_mean) / col_std).data
+    mean_cols = np.tile(np.ma.mean(masked, axis=0).data, (n_row, 1))
+    std_cols = np.tile(np.ma.std(masked, axis=0).data, (n_row, 1))
+    normalized_arr = ((masked - mean_cols) / std_cols).data
+    mask_arr = normalized_arr != 0
 
+    ### Imputation
     if imputation == "zero":
-        imputed = np.nan_to_num(normalized_cols, nan=0.0)
+        imputed_arr = normalized_arr
     elif imputation == "mean":
-        pass
+        imputed_arr = mean_cols * (normalized_arr == 0) + arr * (normalized_arr != 0)
 
-    return imputed, col_mean.data, col_std.data
+    return imputed_arr, mask_arr, mean_cols, std_cols
 
 
 def compute_rmse(predictions, labels):
