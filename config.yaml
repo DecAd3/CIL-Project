@@ -16,8 +16,11 @@ args:
   svd_args:
     svd_rank: 9
   isvd_args:
-    num_iter: 15
-    shrinkage: 38
+    isvd_iter: 15
+    isvd_type: "nnr" # svp: Singular Value Projection, nnr: Nuclear Norm Relaxation
+    isvd_eta: 0.3
+    isvd_rank: 9
+    isvd_shrinkage: 38
 
 
 
