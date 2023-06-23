@@ -1,7 +1,12 @@
 import numpy as np
 import pandas as pd
+<<<<<<< HEAD
 from surprise import Dataset
 from surprise import Reader
+=======
+import math
+from sklearn.metrics import mean_squared_error
+>>>>>>> 69e911cbd2d268526d7406a9d6fd8550ef8f9de8
 
 
 def _read_df_in_format(root):
@@ -50,11 +55,22 @@ def _load_data_for_surprise(data_matrix):
     return data_surprise
 
 def preprocess(arr, n_row, n_col):
+def preprocess(arr, n_row, n_col, imputation):
     masked = np.ma.masked_equal(arr, 0)
-    u_cols = np.tile(np.ma.mean(masked, axis=0).data, (n_row, 1))
-    std_cols = np.tile(np.ma.std(masked, axis=0).data, (n_row, 1))
-    normalized = (masked - u_cols) / std_cols
-    return normalized.data
+    col_mean = np.tile(np.ma.mean(masked, axis=0).data, (n_row, 1))
+    col_std = np.tile(np.ma.std(masked, axis=0).data, (n_row, 1))
+    normalized_cols = ((masked - col_mean) / col_std).data
+
+    if imputation == "zero":
+        imputed = np.nan_to_num(normalized_cols, nan=0.0)
+    elif imputation == "mean":
+        pass
+
+    return imputed, col_mean.data, col_std.data
+
+
+def compute_rmse(predictions, labels):
+    return math.sqrt(mean_squared_error(predictions, labels))
 
 
 def train():
