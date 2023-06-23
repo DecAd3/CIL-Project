@@ -29,16 +29,19 @@ def _convert_df_to_matrix(df, n_row, n_col):
     return data_matrix, is_provided
 
 
-def _load_data_for_surprise(data_matrix):
+def _load_data_for_surprise(df):
     itemID = []
     userID = []
     rating = []
 
-    for uid in range(data_matrix.shape[0]):
-        for iid in range(data_matrix.shape[1]):
-            userID.append(uid)
-            itemID.append(iid)
-            rating.append(data_matrix[uid,iid])
+    UIDs = df['row'].to_numpy()
+    IIDs = df['col'].to_numpy()
+    PREDs = df['Prediction'].to_numpy()
+
+    for i in range(df.shape[0]):
+        userID.append(UIDs[i]-1)
+        itemID.append(IIDs[i]-1)
+        rating.append(PREDs[i])
     
     ratings_dict = {'itemID': itemID,
                     'userID': userID,
