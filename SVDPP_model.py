@@ -12,18 +12,18 @@ class SVDPP_model:
         Model for Singular Value Decomposition Plus Plus(SVDPP)
         '''
         self.algo = None
+        self.seed = args.random_seed
         self.out_path = './output/svdpp.csv'
 
     def train(self, df_train):
-        data_train, _ = _convert_df_to_matrix(df_train, 10000, 1000)
-        data = _load_data_for_surprise(data_train)
+        data = _load_data_for_surprise(df_train)
 
         trainset = data.build_full_trainset()
 
         # create SVDPP algorithm and train it
-        algorithm = SVDpp(n_factors=9, lr_all=0.085, n_epochs=10, reg_all=0.01, verbose=True)
+        algorithm = SVDpp(n_factors=9, lr_all=0.008, n_epochs=50, reg_all=0.03, verbose=True, random_state=self.seed)
         algorithm.fit(trainset)
-        print('finish training')
+        print(' finish training')
         self.algo = algorithm
 
     def predict(self, df_test):

@@ -10,7 +10,7 @@ args:
     imputation: "zero"
     normalization: "zscore"
   experiment_args:
-    model_name: "svd"
+    model_name: "svd++"
     save_predictions: False
     predictions_folder: "predictions"
   svd_args:
