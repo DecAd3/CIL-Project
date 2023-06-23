@@ -54,8 +54,9 @@ def _load_data_for_surprise(df):
 
     return data_surprise
 
+
 def preprocess(arr, n_row, n_col, imputation):
-    ### Column Normalize
+    ### Column Normalization
     masked = np.ma.masked_equal(arr, 0)
     mean_cols = np.tile(np.ma.mean(masked, axis=0).data, (n_row, 1))
     std_cols = np.tile(np.ma.std(masked, axis=0).data, (n_row, 1))
