@@ -1,5 +1,7 @@
 import numpy as np
 import pandas as pd
+from surprise import Dataset
+from surprise import Reader
 
 
 def _read_df_in_format(root):
@@ -24,6 +26,28 @@ def _convert_df_to_matrix(df, n_row, n_col):
 
     return data_matrix, is_provided
 
+
+def _load_data_for_surprise(data_matrix):
+    itemID = []
+    userID = []
+    rating = []
+
+    for uid in range(data_matrix.shape[0]):
+        for iid in range(data_matrix.shape[1]):
+            userID.append(uid)
+            itemID.append(iid)
+            rating.append(data_matrix[uid,iid])
+    
+    ratings_dict = {'itemID': itemID,
+                    'userID': userID,
+                    'rating': rating}
+    df = pd.DataFrame(ratings_dict)
+
+    # The columns must correspond to user id, item id and ratings (in that order).
+    reader = Reader(rating_scale=(1, 5))
+    data_surprise = Dataset.load_from_df(df[['userID', 'itemID', 'rating']], reader=reader)
+
+    return data_surprise
 
 def preprocess(arr, n_row, n_col):
     masked = np.ma.masked_equal(arr, 0)
