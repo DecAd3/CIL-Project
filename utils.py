@@ -29,6 +29,7 @@ def _convert_df_to_matrix(df, n_row, n_col):
 
 def preprocess(arr, n_row, n_col, imputation):
     masked = np.ma.masked_equal(arr, 0)
+    # to check: mean along row / col have effects on results?
     col_mean = np.tile(np.ma.mean(masked, axis=0).data, (n_row, 1))
     col_std = np.tile(np.ma.std(masked, axis=0).data, (n_row, 1))
     normalized_cols = ((masked - col_mean) / col_std).data
@@ -44,12 +45,9 @@ def preprocess(arr, n_row, n_col, imputation):
 def compute_rmse(predictions, labels):
     return math.sqrt(mean_squared_error(predictions, labels))
 
-def postprocess(arr, predicted, n_row, n_col, min_rate = 1, max_rate = 5):
-    masked = np.ma.masked_equal(arr, 0)
-    u_cols = np.tile(np.ma.mean(masked, axis=0).data, (n_row, 1))
-    std_cols = np.tile(np.ma.std(masked, axis=0).data, (n_row, 1))
-    denormalized_predicted = predicted * std_cols + u_cols
-    clipped_predicted = np.clip(denormalized_predicted, min_rate, max_rate)
+def postprocess(raw_predictions, data_mean, data_std, min_rate = 1, max_rate = 5):
+    denormalized_predictions = raw_predictions * data_std + data_mean
+    clipped_predicted = np.clip(denormalized_predictions, min_rate, max_rate)
     return clipped_predicted
 
 def train():
