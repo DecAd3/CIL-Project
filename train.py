@@ -54,8 +54,8 @@ def train(args):
     elif args.model_name == 'als':
         pass
 
-    model.train(df_train, args)
-    model.predict(df_test, args)
+    model.train(df_train)
+    model.predict(df_test)
 
 
 if __name__ == '__main__':
