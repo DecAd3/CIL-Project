@@ -5,9 +5,9 @@ args:
     num_users: 10000
     num_items: 1000
     test_size: 0.1
-    test_save_dir: ./logs/output
-    model_load_path: ./models
-    model_save_path: ./models
+    test_save_dir: ./output/logs/output
+    model_load_path: ./output/models
+    model_save_path: ./output/models
     random_seed: 42
     device: "cpu"
     imputation: "mean"
@@ -16,8 +16,10 @@ args:
     max_rate: 5
   experiment_args:
     model_name: "isvd"
+    save_predictions: False
+    predictions_folder: ./output/predictions
     generate_submissions: True
-    submission_folder: ./output
+    submission_folder: ./output/submission
     verbose: True
   svd_args:
     svd_rank: 9
