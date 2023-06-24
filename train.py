@@ -53,8 +53,11 @@ def process_config(path):
     
     # ISVD arguments
     isvd_args = data['args']['isvd_args']
-    args.num_iter = isvd_args['num_iter']
-    args.shrinkage = isvd_args['shrinkage']
+    args.isvd_iter = isvd_args['isvd_iter']
+    args.isvd_type = isvd_args['isvd_type']
+    args.isvd_eta = isvd_args['isvd_eta']
+    args.isvd_rank = isvd_args['isvd_rank']
+    args.shrinkage = isvd_args['isvd_shrinkage']
 
     # XXX arguments
     return args
@@ -74,7 +77,6 @@ def train(args):
     elif args.model_name == 'als':
         model = ALS_model(args)
 
-    print("Model:", args.model_name)
     model.train(df_train)
     model.predict(df_test=df_test)
 
