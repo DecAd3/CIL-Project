@@ -32,7 +32,6 @@ def process_config(path):
     args.device = training_args['device']
     args.normalization = training_args['normalization']
     args.imputation = training_args['imputation']
-    args.final_model = training_args['final_model']
 
     # Experiment arguments
     experiment_args = data['args']['experiment_args']

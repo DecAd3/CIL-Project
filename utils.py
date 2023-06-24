@@ -91,7 +91,7 @@ def generate_submission(sub_sample_path, store_path, data_matrix, clip_min=1, cl
     row_id = df['row'].to_numpy() - 1
     col_id = df['col'].to_numpy() - 1
     data_matrix = np.clip(data_matrix, clip_min, clip_max)
-    data_matrix = np.round(data_matrix)
+    # data_matrix = np.round(data_matrix)
     df['Prediction'] = data_matrix[row_id, col_id]
 
     def reformat_id(record):

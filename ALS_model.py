@@ -1,6 +1,6 @@
 import os
 import numpy as np
-from utils import _convert_df_to_matrix, preprocess, postprocess, compute_rmse
+from utils import _convert_df_to_matrix, preprocess, postprocess, compute_rmse, generate_submission
 
 class ALS_model:
     def __init__(self, args):
@@ -16,6 +16,7 @@ class ALS_model:
         self.save_predictions = args.save_predictions
         self.predictions_folder = args.predictions_folder
         self.model_name = 'als'
+        self.args = args
         
     def train(self, df_train):
         np.random.seed(self.seed_value)
@@ -81,13 +82,12 @@ class ALS_model:
     #     return update_factors
     
     def predict(self, df_test):
-        predictions = self.reconstructed_matrix[df_test['row'].values - 1, df_test['col'].values - 1]
-        labels = df_test['Prediction'].values
-        print('RMSE: {:.4f}'.format(compute_rmse(predictions, labels)))
-
-        if self.save_predictions:
-            np.savetxt(os.path.join('.', self.predictions_folder, self.model_name + '_pred_full.txt'), self.reconstructed_matrix)
-            np.savetxt(os.path.join('.', self.predictions_folder, self.model_name + '_pred_test.txt'), predictions) 
-
-    def predict_submission(self, row_idx, col_idx):
-        return self.reconstructed_matrix[row_idx, col_idx]
+        generate_submissions = self.args.generate_submissions
+        if not generate_submissions:
+            predictions = self.reconstructed_matrix[df_test['row'].values - 1, df_test['col'].values - 1]
+            labels = df_test['Prediction'].values
+            print('RMSE: {:.4f}'.format(compute_rmse(predictions, labels)))
+        
+        else:
+            submission_file = self.args.submission_folder + "/als.csv"
+            generate_submission(self.args.sample_data, submission_file, self.reconstructed_matrix)
