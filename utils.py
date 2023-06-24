@@ -83,6 +83,8 @@ def compute_rmse(predictions, labels):
 
 
 def generate_submission(sub_sample_path, store_path, data_matrix, clip_min=1, clip_max=5):
+    print("Start generating submissions...")
+
     # print("Loading requests specified by submission samples...")
     df = _read_df_in_format(sub_sample_path)
     nrows = df.shape[0]
@@ -98,3 +100,5 @@ def generate_submission(sub_sample_path, store_path, data_matrix, clip_min=1, cl
     df['Id'] = df.apply(reformat_id, axis=1)
     df = df.drop(['row', 'col'], axis=1)
     df.to_csv(store_path, columns=['Id', 'Prediction'], index=False)
+
+    print("Generating ends. ")
