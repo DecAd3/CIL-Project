@@ -60,6 +60,14 @@ def process_config(path):
     args.isvd_rank = isvd_args['isvd_rank']
     args.shrinkage = isvd_args['isvd_shrinkage']
 
+    # SVDPP arguments
+    svdpp_args = data['args']['svdpp_args']
+    args.svdpp_args = argparse.Namespace()
+    args.svdpp_args.n_factors = svdpp_args['n_factors']
+    args.svdpp_args.lr_all = svdpp_args['lr_all']
+    args.svdpp_args.n_epochs = svdpp_args['n_epochs']
+    args.svdpp_args.reg_all = svdpp_args['reg_all']
+
     # XXX arguments
     return args
 

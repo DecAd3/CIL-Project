@@ -32,7 +32,11 @@ args:
     isvd_eta: 0.3
     isvd_rank: 9
     isvd_shrinkage: 38
-
+  svdpp_args:
+    n_factors: 3
+    lr_all: 0.003
+    n_epochs: 100
+    reg_all: 0.05
 
 
 
