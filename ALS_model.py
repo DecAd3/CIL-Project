@@ -87,7 +87,7 @@ class ALS_model:
 
     #     return update_factors
     
-    def predict(self, df_test):
+    def predict(self, df_test, save_string = "/als.csv"):
         generate_submissions = self.args.generate_submissions
         if not generate_submissions:
             predictions = self.reconstructed_matrix[df_test['row'].values - 1, df_test['col'].values - 1]
@@ -95,5 +95,5 @@ class ALS_model:
             print('RMSE: {:.4f}'.format(compute_rmse(predictions, labels)))
         
         else:
-            submission_file = self.args.submission_folder + "/als.csv"
+            submission_file = self.args.submission_folder + save_string
             generate_submission(self.args.sample_data, submission_file, self.reconstructed_matrix)

@@ -18,7 +18,7 @@ args:
     model_name: "isvd+als"
     save_predictions: False
     predictions_folder: ./output/predictions
-    generate_submissions: False
+    generate_submissions: True
     submission_folder: ./output/submission
     verbose: True
   svd_args:
@@ -30,7 +30,7 @@ args:
     reg_param: 0.15
     latent_dim: 3
   isvd_args:
-    isvd_iter: 3
+    isvd_iter: 15
     isvd_type: "nnr" # svp: Singular Value Projection, nnr: Nuclear Norm Relaxation
     isvd_eta: 0.3
     isvd_rank: 9
