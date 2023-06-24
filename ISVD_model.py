@@ -53,3 +53,7 @@ class ISVD_model:
         else:
             submission_file = self.args.submission_folder + "/isvd.csv"
             generate_submission(self.args.sample_data, submission_file, self.reconstructed_matrix)
+
+    def obtain_U_VT_as_initialization(self):
+        U, sigma_vec, VT = np.linalg.svd(self.reconstructed_matrix)
+        return [U, VT]

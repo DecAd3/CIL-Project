@@ -18,12 +18,18 @@ class ALS_model:
         self.model_name = 'als'
         self.args = args
         
-    def train(self, df_train):
+    def train(self, df_train, initialization = None):
         np.random.seed(self.seed_value)
         train_data, is_provided = _convert_df_to_matrix(df_train, self.num_users, self.num_items)
         train_data, data_mean, data_std = preprocess(train_data, self.num_users, self.num_items, self.imputation)
-        # Initialize user and item latent factor matrices        
-        U, sigma, VT = np.linalg.svd(train_data)
+        # Initialize user and item latent factor matrices 
+        U = None
+        VT = None
+        if initialization is None:       
+            U, sigma, VT = np.linalg.svd(train_data)
+        else:
+            U = initialization[0]
+            VT = initialization[1]
         user_factors = U[:, :self.latent_dim]
         item_factors = VT[:self.latent_dim, :]
         masked_A = is_provided * train_data

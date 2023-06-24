@@ -15,10 +15,10 @@ args:
     min_rate: 1
     max_rate: 5
   experiment_args:
-    model_name: "als"
+    model_name: "isvd+als"
     save_predictions: False
     predictions_folder: ./output/predictions
-    generate_submissions: True
+    generate_submissions: False
     submission_folder: ./output/submission
     verbose: True
   svd_args:
@@ -30,7 +30,7 @@ args:
     reg_param: 0.15
     latent_dim: 3
   isvd_args:
-    isvd_iter: 15
+    isvd_iter: 3
     isvd_type: "nnr" # svp: Singular Value Projection, nnr: Nuclear Norm Relaxation
     isvd_eta: 0.3
     isvd_rank: 9

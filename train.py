@@ -2,13 +2,13 @@ import sys
 import yaml
 import argparse
 from utils import _read_df_in_format, _convert_df_to_matrix, preprocess, postprocess
-from ALS_model import ALS_model
 from sklearn.model_selection import train_test_split
 
-from utils import _read_df_in_format
 from SVD_model import SVD_model
 from SVDPP_model import SVDPP_model
 from ISVD_model import ISVD_model
+from ALS_model import ALS_model
+from ISVD_ALS_model import ISVD_ALS_model
 
 
 def process_config(path):
@@ -88,6 +88,8 @@ def train(args):
         model = ISVD_model(args)
     elif args.model_name == 'als':
         model = ALS_model(args)
+    elif args.model_name == 'isvd+als':
+        model = ISVD_ALS_model(args)
 
     if (args.generate_submissions):
         df_train = df
