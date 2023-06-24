@@ -1,6 +1,6 @@
 import numpy as np
 import os
-from utils import _convert_df_to_matrix, preprocess, compute_rmse
+from utils import _convert_df_to_matrix, preprocess, compute_rmse, generate_submission
 
 
 class ISVD_model:
@@ -39,13 +39,18 @@ class ISVD_model:
 
         print("Training ends. ")
 
-    def predict(self, df_test):
-        predictions = self.reconstructed_matrix[df_test['row'].values - 1, df_test['col'].values - 1]
-        labels = df_test['Prediction'].values
-        print('RMSE: {:.4f}'.format(compute_rmse(predictions, labels)))
+    def predict(self, df_test, is_final = False):
+        if not is_final:
+            predictions = self.reconstructed_matrix[df_test['row'].values - 1, df_test['col'].values - 1]
+            labels = df_test['Prediction'].values
+            print('RMSE: {:.4f}'.format(compute_rmse(predictions, labels)))
 
-        save_predictions = self.args.save_predictions
-        if save_predictions:
-            np.savetxt(os.path.join('.', self.args.predictions_folder, self.args.model_name + '_pred_full.txt'), self.reconstructed_matrix)
-            np.savetxt(os.path.join('.', self.args.predictions_folder, self.args.model_name + '_pred_test.txt'), predictions)
+            save_predictions = self.args.save_predictions
+            if save_predictions:
+                np.savetxt(os.path.join('.', self.args.predictions_folder, self.args.model_name + '_pred_full.txt'), self.reconstructed_matrix)
+                np.savetxt(os.path.join('.', self.args.predictions_folder, self.args.model_name + '_pred_test.txt'), predictions)
 
+        generate_submissions = self.args.generate_submissions
+        if generate_submissions:
+            submission_file = self.args.submission_folder + "/isvd.csv"
+            generate_submission(self.args.sample_data, submission_file, self.reconstructed_matrix)

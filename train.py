@@ -21,6 +21,7 @@ def process_config(path):
     # Training arguments
     training_args = data['args']['training_args']
     args.train_data = training_args['train_data']
+    args.sample_data = training_args['sample_data']
     args.num_users = training_args['num_users']
     args.num_items = training_args['num_items']
     args.test_size = training_args['test_size']
@@ -31,12 +32,15 @@ def process_config(path):
     args.device = training_args['device']
     args.normalization = training_args['normalization']
     args.imputation = training_args['imputation']
+    args.final_model = training_args['final_model']
 
     # Experiment arguments
     experiment_args = data['args']['experiment_args']
     args.model_name = experiment_args['model_name']
     args.save_predictions = experiment_args['save_predictions']
     args.predictions_folder = experiment_args['predictions_folder']
+    args.generate_submissions = experiment_args['generate_submissions']
+    args.submission_folder = experiment_args['submission_folder']
     args.verbose = experiment_args['verbose']
 
     # SVD arguments
@@ -84,9 +88,11 @@ def train(args):
         model = ISVD_model(args)
     elif args.model_name == 'als':
         model = ALS_model(args)
-
+    if (args.final_model):
+        df_train = df
+        df_test = None
     model.train(df_train)
-    model.predict(df_test=df_test)
+    model.predict(df_test=df_test, is_final = args.final_model)
 
 
 if __name__ == '__main__':

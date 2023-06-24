@@ -73,13 +73,30 @@ def preprocess(arr, n_row, n_col, imputation):
     return imputed_arr, mean_cols, std_cols
 
 
-def compute_rmse(predictions, labels):
-    return math.sqrt(mean_squared_error(predictions, labels))
-
 def postprocess(raw_predictions, data_mean, data_std, min_rate = 1, max_rate = 5):
     denormalized_predictions = raw_predictions * data_std + data_mean
     clipped_predicted = np.clip(denormalized_predictions, min_rate, max_rate)
     return clipped_predicted
 
-def train():
-    pass
+
+def compute_rmse(predictions, labels):
+    return math.sqrt(mean_squared_error(predictions, labels))
+
+
+def generate_submission(sub_sample_path, store_path, data_matrix, clip_min=1, clip_max=5):
+    # print("Loading requests specified by submission samples...")
+    df = _read_df_in_format(sub_sample_path)
+    nrows = df.shape[0]
+    # print(f"Storing {nrows} records for submission as requested...")
+    row_id = df['row'].to_numpy() - 1
+    col_id = df['col'].to_numpy() - 1
+    data_matrix = np.clip(data_matrix, clip_min, clip_max)
+    data_matrix = np.round(data_matrix)
+    df['Prediction'] = data_matrix[row_id, col_id]
+
+    def reformat_id(record):
+        return f"r{record['row']:.0f}_c{record['col']:.0f}"
+
+    df['Id'] = df.apply(reformat_id, axis=1)
+    df = df.drop(['row', 'col'], axis=1)
+    df.to_csv(store_path, columns=['Id', 'Prediction'], index=False)

@@ -1,6 +1,6 @@
 import numpy as np
 import os
-from utils import _convert_df_to_matrix, preprocess, compute_rmse
+from utils import _convert_df_to_matrix, preprocess, compute_rmse, generate_submission
 
 
 class SVD_model:
@@ -30,3 +30,7 @@ class SVD_model:
             np.savetxt(os.path.join('.', self.args.predictions_folder, self.args.model_name + '_pred_full.txt'), self.reconstructed_matrix)
             np.savetxt(os.path.join('.', self.args.predictions_folder, self.args.model_name + '_pred_test.txt'), predictions)
 
+        generate_submissions = self.args.generate_submissions
+        if generate_submissions:
+            submission_file = self.args.submission_folder + "/svd.csv"
+            generate_submission(self.args.sample_data, submission_file, self.reconstructed_matrix)
