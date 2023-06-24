@@ -10,16 +10,14 @@ args:
     model_save_path: ./output/models
     random_seed: 42
     device: "cpu"
-    imputation: "mean"
+    imputation: "zero"
     normalization: "zscore"
     min_rate: 1
     max_rate: 5
 
   experiment_args:
-    model_name: "isvd+als"
-    save_predictions: False
-    predictions_folder: ./output/predictions
-    generate_submissions: True
+    model_name: "isvd"
+    generate_submissions: False
     submission_folder: ./output/submission
     verbose: True
 
