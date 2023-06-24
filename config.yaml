@@ -14,7 +14,7 @@ args:
     min_rate: 1
     max_rate: 5
   experiment_args:
-    model_name: "isvd"
+    model_name: "svd++"
     save_predictions: False
     predictions_folder: "predictions"
     verbose: True
@@ -31,7 +31,11 @@ args:
     isvd_eta: 0.3
     isvd_rank: 9
     isvd_shrinkage: 38
-
+  svdpp_args:
+    n_factors: 3
+    lr_all: 0.003
+    n_epochs: 100
+    reg_all: 0.05
 
 
 

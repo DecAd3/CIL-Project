@@ -16,4 +16,3 @@ grid_search = GridSearchCV(SVDpp, param_grid, measures=['rmse'], cv = 3)
 grid_search.fit(data)
 
 print(grid_search.best_params)
-np.savetxt('./output/best_params_svdpp', grid_search.best_params)

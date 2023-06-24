@@ -14,6 +14,12 @@ class SVDPP_model:
         self.algo = None
         self.seed = args.random_seed
         self.out_path = './output/svdpp.csv'
+        self.verbose = args.verbose
+        self.n_factors = args.svdpp_args.n_factors
+        self.lr_all = args.svdpp_args.lr_all
+        self.n_epochs = args.svdpp_args.n_epochs
+        self.reg_all = args.svdpp_args.reg_all
+
 
     def train(self, df_train):
         data = _load_data_for_surprise(df_train)
@@ -21,7 +27,8 @@ class SVDPP_model:
         trainset = data.build_full_trainset()
 
         # create SVDPP algorithm and train it
-        algorithm = SVDpp(n_factors=9, lr_all=0.008, n_epochs=50, reg_all=0.03, verbose=True, random_state=self.seed)
+        algorithm = SVDpp(n_factors=self.n_factors, lr_all=self.lr_all, n_epochs=self.n_epochs,
+                           reg_all=self.reg_all, verbose=self.verbose, random_state=self.seed)
         algorithm.fit(trainset)
         print(' finish training')
         self.algo = algorithm
