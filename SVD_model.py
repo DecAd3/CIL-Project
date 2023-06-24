@@ -14,8 +14,7 @@ class SVD_model:
 
         U, sigma_vec, VT = np.linalg.svd(data_train, full_matrices=False)
         Sigma = np.zeros((1000, 1000))
-        rank = self.rank
-        Sigma[:rank, :rank] = np.diag(sigma_vec[:rank])
+        Sigma[:self.rank, :self.rank] = np.diag(sigma_vec[:self.rank])
         self.reconstructed_matrix = U @ Sigma @ VT * std_train + mean_train
 
         print("Training ends. ")
