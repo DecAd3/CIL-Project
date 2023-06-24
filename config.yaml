@@ -17,16 +17,17 @@ args:
 
   experiment_args:
     model_name: "isvd"
-    generate_submissions: False
+    generate_submissions: True
     submission_folder: ./output/submission
     verbose: True
 
   svd_args:
+    imputation: "zero"
     rank: 9
   als_args:
-    svd_rank: 9
     imputation: "zero"
     num_iterations: 20
+    svd_rank: 9
     reg_param: 0.15
     latent_dim: 3
   isvd_args:

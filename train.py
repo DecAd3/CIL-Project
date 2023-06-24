@@ -43,7 +43,7 @@ def process_config(path):
     # SVD arguments
     svd_args = data['args']['svd_args']
     args.svd_args = argparse.Namespace()
-    args.rank = svd_args['rank']
+    args.svd_args.rank = svd_args['rank']
 
     # ALS arguments
     als_args = data['args']['als_args']
@@ -57,11 +57,12 @@ def process_config(path):
     # ISVD arguments
     isvd_args = data['args']['isvd_args']
     args.isvd_args = argparse.Namespace()
-    args.num_iterations = isvd_args['num_iterations']
-    args.type = isvd_args['type']
-    args.eta = isvd_args['eta']
-    args.rank = isvd_args['rank']
-    args.shrinkage = isvd_args['shrinkage']
+    args.isvd_args.num_iterations = isvd_args['num_iterations']
+    args.isvd_args.imputation = isvd_args['imputation']
+    args.isvd_args.type = isvd_args['type']
+    args.isvd_args.eta = isvd_args['eta']
+    args.isvd_args.rank = isvd_args['rank']
+    args.isvd_args.shrinkage = isvd_args['shrinkage']
 
     # SVDPP arguments
     svdpp_args = data['args']['svdpp_args']
