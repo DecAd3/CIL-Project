@@ -79,7 +79,10 @@ def process_config(path):
 def train(args):
 
     df = _read_df_in_format(args.train_data)
-    df_train, df_test = train_test_split(df, test_size=args.test_size, random_state=args.random_seed)
+    if not args.generate_submissions:
+        df_train, df_test = train_test_split(df, test_size=args.test_size, random_state=args.random_seed)
+    else:
+        df_train, df_test = df, None
 
     if args.model_name == 'svd':
         model = SVD_model(args)
@@ -89,10 +92,6 @@ def train(args):
         model = ISVD_model(args)
     elif args.model_name == 'als':
         model = ALS_model(args)
-
-    if (args.generate_submissions):
-        df_train = df
-        df_test = None
 
     model.train(df_train)
     model.predict(df_test)
