@@ -6,15 +6,15 @@ class ALS_model:
     def __init__(self, args):
         self.num_users = args.num_users
         self.num_items = args.num_items
-        self.imputation = args.imputation
+        self.imputation = args.als_args.imputation
         self.svd_rank = args.als_args.svd_rank
         self.latent_dim = args.als_args.latent_dim
         self.num_iterations = args.als_args.num_iterations
         self.reg_param = args.als_args.reg_param
         self.seed_value = args.random_seed
         self.verbose = args.verbose
-        self.save_predictions = self.args.save_predictions
-        self.predictions_folder = self.args.predictions_folder
+        self.save_predictions = args.save_predictions
+        self.predictions_folder = args.predictions_folder
         self.model_name = 'als'
         
     def train(self, df_train):
@@ -32,13 +32,13 @@ class ALS_model:
                 print("epoch: ", _)
             for row_idx in range(self.num_users):
                 # Update user factors
-                sigma1 = item_factors @ np.diag(is_provided[row_idx, :]) @ item_factors.T
+                sigma1 = item_factors @ (is_provided[row_idx, :][:, np.newaxis] * item_factors.T)    # np.diag(is_provided[row_idx, :])
                 sigma2 = item_factors @ masked_A[row_idx,:]
                 update_factors = np.linalg.solve(sigma1 + self.reg_param * np.eye(self.latent_dim), sigma2)
                 user_factors[row_idx, :] = update_factors # self.update_factors(train_data, item_factors, user_factors, is_provided, axis=0, index = row_idx)
             for col_idx in range(self.num_items):
                 # Update item factors
-                sigma1 = user_factors.T @ np.diag(is_provided[:, col_idx]) @ user_factors
+                sigma1 = user_factors.T @ (is_provided[:, col_idx][:, np.newaxis] * user_factors) # np.diag(is_provided[:, col_idx])
                 sigma2 = user_factors.T @ masked_A[:,col_idx]
                 update_factors = np.linalg.solve(sigma1 + self.reg_param * np.eye(self.latent_dim), sigma2)
                 item_factors[:, col_idx] = update_factors # self.update_factors(train_data, user_factors, item_factors, is_provided, axis=1, index = col_idx)

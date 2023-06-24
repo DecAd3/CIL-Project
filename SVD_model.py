@@ -34,3 +34,4 @@ class SVD_model:
         if generate_submissions:
             submission_file = self.args.submission_folder + "/svd.csv"
             generate_submission(self.args.sample_data, submission_file, self.reconstructed_matrix)
+
