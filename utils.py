@@ -62,7 +62,6 @@ def preprocess(arr, n_row, n_col, imputation):
     mean_cols = np.tile(np.ma.mean(masked, axis=0).data, (n_row, 1))
     std_cols = np.tile(np.ma.std(masked, axis=0).data, (n_row, 1))
     normalized_arr = ((masked - mean_cols) / std_cols).data
-    mask_arr = normalized_arr != 0
 
     ### Imputation
     if imputation == "zero":

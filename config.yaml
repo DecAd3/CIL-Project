@@ -14,15 +14,15 @@ args:
     normalization: "zscore"
     min_rate: 1
     max_rate: 5
+
   experiment_args:
     model_name: "isvd"
-    save_predictions: False
-    predictions_folder: ./output/predictions
-    generate_submissions: True
+    generate_submissions: False
     submission_folder: ./output/submission
     verbose: True
+
   svd_args:
-    svd_rank: 9
+    rank: 9
   als_args:
     svd_rank: 9
     imputation: "zero"
@@ -30,11 +30,12 @@ args:
     reg_param: 0.15
     latent_dim: 3
   isvd_args:
-    isvd_iter: 15
-    isvd_type: "nnr" # svp: Singular Value Projection, nnr: Nuclear Norm Relaxation
-    isvd_eta: 0.3
-    isvd_rank: 9
-    isvd_shrinkage: 38
+    imputation: "mean"
+    num_iterations: 15
+    type: "nnr" # svp: Singular Value Projection, nnr: Nuclear Norm Relaxation
+    eta: 0.3
+    rank: 9
+    shrinkage: 38
   svdpp_args:
     n_factors: 3
     lr_all: 0.003
