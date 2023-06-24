@@ -50,6 +50,7 @@ def process_config(path):
     args.als_args.num_iterations = als_args['num_iterations']
     args.als_args.reg_param = als_args['reg_param']
     args.als_args.latent_dim = als_args['latent_dim']
+    args.als_args.imputation = als_args['imputation']
     
     # ISVD arguments
     isvd_args = data['args']['isvd_args']

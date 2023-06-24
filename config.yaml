@@ -21,6 +21,7 @@ args:
   svd_args:
     svd_rank: 9
   als_args:
+    imputation: "zero"
     svd_rank: 9
     num_iterations: 20
     reg_param: 0.2
