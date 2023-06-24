@@ -26,4 +26,3 @@ class SVD_model:
         if save_predictions:
             np.savetxt(os.path.join('.', self.args.predictions_folder, self.args.model_name + '_pred_full.txt'), self.reconstructed_matrix)
             np.savetxt(os.path.join('.', self.args.predictions_folder, self.args.model_name + '_pred_test.txt'), predictions)
-

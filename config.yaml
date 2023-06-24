@@ -14,7 +14,7 @@ args:
     min_rate: 1
     max_rate: 5
   experiment_args:
-    model_name: "isvd"
+    model_name: "als"
     save_predictions: False
     predictions_folder: "predictions"
     verbose: True

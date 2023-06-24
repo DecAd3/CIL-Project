@@ -13,8 +13,8 @@ class ALS_model:
         self.reg_param = args.als_args.reg_param
         self.seed_value = args.random_seed
         self.verbose = args.verbose
-        self.save_predictions = self.args.save_predictions
-        self.predictions_folder = self.args.predictions_folder
+        self.save_predictions = args.save_predictions
+        self.predictions_folder = args.predictions_folder
         self.model_name = 'als'
         
     def train(self, df_train):
