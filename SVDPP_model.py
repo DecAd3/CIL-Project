@@ -1,5 +1,5 @@
 import numpy as np
-from utils import _load_data_for_surprise, _convert_df_to_matrix, compute_rmse
+from utils import _load_data_for_surprise, _read_df_in_format, compute_rmse
 import os
 from surprise import SVDpp
 from surprise.model_selection import KFold
@@ -19,7 +19,8 @@ class SVDPP_model:
         self.lr_all = args.svdpp_args.lr_all
         self.n_epochs = args.svdpp_args.n_epochs
         self.reg_all = args.svdpp_args.reg_all
-
+        self.generate_submissions = args.generate_submissions
+        self.sample_data = args.sample_data
 
     def train(self, df_train):
         data = _load_data_for_surprise(df_train)
@@ -34,6 +35,8 @@ class SVDPP_model:
         self.algo = algorithm
 
     def predict(self, df_test):
+        if self.generate_submissions:
+            df_test = _read_df_in_format(self.sample_data)
         predictions = []
         with open(self.out_path, 'w+') as f:
             f.write('Id,Prediction\n')
@@ -46,5 +49,6 @@ class SVDPP_model:
                 pred = self.algo.predict(uid, iid, verbose=False)
                 predictions.append(pred.est)
                 f.write('r{0}_c{1},{2}\n'.format(row, col, pred.est))
-        labels = df_test['Prediction'].values
-        print('RMSE: {:.4f}'.format(compute_rmse(predictions, labels)))
+        if self.generate_submissions:
+            labels = df_test['Prediction'].values
+            print('RMSE: {:.4f}'.format(compute_rmse(predictions, labels)))
