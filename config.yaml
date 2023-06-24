@@ -22,9 +22,9 @@ args:
     svd_rank: 9
   als_args:
     imputation: "zero"
-    svd_rank: 9
+    svd_rank: 10
     num_iterations: 20
-    reg_param: 0.2
+    reg_param: 0.15
     latent_dim: 3
   isvd_args:
     isvd_iter: 15
@@ -37,9 +37,3 @@ args:
     lr_all: 0.003
     n_epochs: 100
     reg_all: 0.05
-
-
-
-
-
-
