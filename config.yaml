@@ -1,6 +1,7 @@
 args:
   training_args:
     train_data: ./data/data_train.csv
+    sample_data: ./data/sampleSubmission.csv
     num_users: 10000
     num_items: 1000
     test_size: 0.1
@@ -13,10 +14,13 @@ args:
     normalization: "zscore"
     min_rate: 1
     max_rate: 5
+    final_model: True
   experiment_args:
-    model_name: "svd++"
+    model_name: "isvd"
     save_predictions: False
-    predictions_folder: "predictions"
+    predictions_folder: ./predictions
+    generate_submissions: True
+    submission_folder: ./submission
     verbose: True
   svd_args:
     svd_rank: 9
