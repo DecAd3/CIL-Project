@@ -16,8 +16,10 @@ args:
     max_rate: 5
 
   experiment_args:
-    model_name: "isvd"
-    generate_submissions: False
+    model_name: "isvd+als"
+    save_predictions: False
+    predictions_folder: ./output/predictions
+    generate_submissions: True
     submission_folder: ./output/submission
     verbose: True
 
