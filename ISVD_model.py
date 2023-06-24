@@ -45,11 +45,6 @@ class ISVD_model:
             labels = df_test['Prediction'].values
             print('RMSE: {:.4f}'.format(compute_rmse(predictions, labels)))
 
-            save_predictions = self.args.save_predictions
-            if save_predictions:
-                np.savetxt(os.path.join('.', self.args.predictions_folder, self.args.model_name + '_pred_full.txt'), self.reconstructed_matrix)
-                np.savetxt(os.path.join('.', self.args.predictions_folder, self.args.model_name + '_pred_test.txt'), predictions)
-
         else:
             submission_file = self.args.submission_folder + "/isvd.csv"
             generate_submission(self.args.sample_data, submission_file, self.reconstructed_matrix)

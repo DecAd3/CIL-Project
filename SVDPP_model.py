@@ -42,13 +42,11 @@ class SVDPP_model:
             f.write('Id,Prediction\n')
             for i in range(df_test.shape[0]):
                 row, col = int(df_test['row'].values[i]), int(df_test['col'].values[i])
-                # row = int(row[1:])
-                # col = int(col[1:])
                 uid = row-1
                 iid = col-1
                 pred = self.algo.predict(uid, iid, verbose=False)
                 predictions.append(pred.est)
                 f.write('r{0}_c{1},{2}\n'.format(row, col, pred.est))
-        if self.generate_submissions:
+        if not self.generate_submissions:
             labels = df_test['Prediction'].values
             print('RMSE: {:.4f}'.format(compute_rmse(predictions, labels)))
