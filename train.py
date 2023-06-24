@@ -89,11 +89,13 @@ def train(args):
         model = ISVD_model(args)
     elif args.model_name == 'als':
         model = ALS_model(args)
-    if (args.final_model):
+
+    if (args.generate_submissions):
         df_train = df
         df_test = None
+
     model.train(df_train)
-    model.predict(df_test=df_test, is_final = args.final_model)
+    model.predict(df_test)
 
 
 if __name__ == '__main__':
