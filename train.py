@@ -1,7 +1,7 @@
 import sys
 import yaml
 import argparse
-from utils import _read_df_in_format, _convert_df_to_matrix, preprocess, postprocess
+from utils import _read_df_in_format
 from sklearn.model_selection import train_test_split
 
 from SVD_model import SVD_model
@@ -39,15 +39,14 @@ def process_config(path):
     # Experiment arguments
     experiment_args = data['args']['experiment_args']
     args.model_name = experiment_args['model_name']
-    args.save_predictions = experiment_args['save_predictions']
-    args.predictions_folder = experiment_args['predictions_folder']
     args.generate_submissions = experiment_args['generate_submissions']
     args.submission_folder = experiment_args['submission_folder']
     args.verbose = experiment_args['verbose']
 
     # SVD arguments
     svd_args = data['args']['svd_args']
-    args.svd_rank = svd_args['svd_rank']
+    args.svd_args = argparse.Namespace()
+    args.svd_args.rank = svd_args['rank']
 
     # ALS arguments
     als_args = data['args']['als_args']
@@ -60,11 +59,13 @@ def process_config(path):
     
     # ISVD arguments
     isvd_args = data['args']['isvd_args']
-    args.isvd_iter = isvd_args['isvd_iter']
-    args.isvd_type = isvd_args['isvd_type']
-    args.isvd_eta = isvd_args['isvd_eta']
-    args.isvd_rank = isvd_args['isvd_rank']
-    args.shrinkage = isvd_args['isvd_shrinkage']
+    args.isvd_args = argparse.Namespace()
+    args.isvd_args.num_iterations = isvd_args['num_iterations']
+    args.isvd_args.imputation = isvd_args['imputation']
+    args.isvd_args.type = isvd_args['type']
+    args.isvd_args.eta = isvd_args['eta']
+    args.isvd_args.rank = isvd_args['rank']
+    args.isvd_args.shrinkage = isvd_args['shrinkage']
 
     # SVDPP arguments
     svdpp_args = data['args']['svdpp_args']
@@ -82,6 +83,7 @@ def process_config(path):
     args.bfm_args.dimension = bfm_args['dimension']
     args.bfm_args.use_iu = bfm_args['use_iu']
     args.bfm_args.use_ii = bfm_args['use_ii']
+    
     return args
 
 
