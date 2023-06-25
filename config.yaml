@@ -15,10 +15,10 @@ args:
     min_rate: 1
     max_rate: 5
   experiment_args:
-    model_name: "isvd+als"
+    model_name: "bfm"
     save_predictions: False
     predictions_folder: ./output/predictions
-    generate_submissions: True
+    generate_submissions: False
     submission_folder: ./output/submission
     verbose: True
   svd_args:
@@ -40,3 +40,9 @@ args:
     lr_all: 0.003
     n_epochs: 100
     reg_all: 0.05
+  bfm_args:
+    algorithm: "regression"
+    iteration: 512
+    dimension: 32
+    use_iu: True
+    use_ii: True
