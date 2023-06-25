@@ -16,7 +16,7 @@ from myfm.utils.callbacks.libfm import (
 )
 from myfm.utils.encoders import CategoryValueToSparseEncoder
 
-from utils import _load_data_for_BFM, _convert_df_to_matrix, preprocess, postprocess, compute_rmse, generate_submission
+from utils import _load_data_for_BFM, _read_df_in_format, _convert_df_to_matrix, preprocess, postprocess, compute_rmse, generate_submission
 
 class BFM_model:
     def __init__(self, args):
@@ -29,6 +29,9 @@ class BFM_model:
         self.seed_value = args.random_seed
         self.min_rate = args.min_rate
         self.max_rate = args.max_rate
+        self.generate_submissions = args.generate_submissions
+        self.sample_data = args.sample_data
+        self.submission_folder = args.submission_folder
 
     def train(self, df_train):
         self.df_train = df_train
@@ -37,7 +40,10 @@ class BFM_model:
         np.random.seed(self.seed_value)
         df_train = self.df_train
         df_train = _load_data_for_BFM(df_train)
+        if self.generate_submissions:
+            df_test = _read_df_in_format(self.sample_data)
         df_test = _load_data_for_BFM(df_test)
+
         if self.algorithm == "oprobit":
             # interpret the rating (1, 2, 3, 4, 5) as class (0, 1, 2, 3, 4).
             for df_ in [df_train, df_test]:
@@ -143,7 +149,7 @@ class BFM_model:
             unique_movies, movie_map = np.unique(source.movie_id, return_inverse=True)
             target.append(RelationBlock(movie_map, augment_movie_id(unique_movies)))
 
-        trace_path = "./output/rmse_{0}.csv".format(self.algorithm, "none")
+        trace_path = "./output/bfm/rmse_{0}.csv".format(self.algorithm)
 
         callback: LibFMLikeCallbackBase
         fm: Union[MyFMRegressor, MyFMOrderedProbit]
@@ -179,10 +185,14 @@ class BFM_model:
             n_kept_samples=1,
         )
         
-        # if self.
-        # self.model = fm
-        # self.model.predict()
-        with open(
-            "./output/callback_result_{0}.pkl".format(self.algorithm), "wb"
-        ) as ofs:
-            pickle.dump(callback, ofs)
+        # with open(
+        #     "./output/bfm/callback_result_{0}.pkl".format(self.algorithm), "wb"
+        # ) as ofs:
+        #     pickle.dump(callback, ofs)
+
+        if self.generate_submissions:
+            result = fm.predict(None, X_rel = test_blocks).clip(self.min_rate, self.max_rate)
+            df = pd.read_csv(self.sample_data)
+            df['Prediction'] = result
+            submission_file = self.submission_folder + '/bfm.csv'
+            df.to_csv(submission_file, index=False)

@@ -44,7 +44,7 @@ args:
     reg_all: 0.05
   bfm_args:
     algorithm: "regression"
-    iteration: 512
-    dimension: 32
+    iteration: 500 # 512
+    dimension: 10
     use_iu: True
     use_ii: True
