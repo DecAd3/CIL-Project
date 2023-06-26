@@ -54,6 +54,11 @@ def _load_data_for_surprise(df):
 
     return data_surprise
 
+def _load_data_for_BFM(df):
+    df.rename(columns={'row': 'user_id'}, inplace=True)
+    df.rename(columns={'col': 'movie_id'}, inplace=True)
+    df.rename(columns={'Prediction': 'rating'}, inplace=True)
+    return df
 
 def preprocess(arr, n_row, n_col, imputation):
     ### Column Normalization

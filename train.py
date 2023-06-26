@@ -9,6 +9,7 @@ from SVDPP_model import SVDPP_model
 from ISVD_model import ISVD_model
 from ALS_model import ALS_model
 from ISVD_ALS_model import ISVD_ALS_model
+from BFM_model import BFM_model
 
 
 def process_config(path):
@@ -32,6 +33,8 @@ def process_config(path):
     args.device = training_args['device']
     args.normalization = training_args['normalization']
     args.imputation = training_args['imputation']
+    args.min_rate = training_args['min_rate']
+    args.max_rate = training_args['max_rate']
 
     # Experiment arguments
     experiment_args = data['args']['experiment_args']
@@ -72,6 +75,15 @@ def process_config(path):
     args.svdpp_args.n_epochs = svdpp_args['n_epochs']
     args.svdpp_args.reg_all = svdpp_args['reg_all']
 
+    # BFM arguments
+    bfm_args = data['args']['bfm_args']
+    args.bfm_args = argparse.Namespace()
+    args.bfm_args.algorithm = bfm_args['algorithm']
+    args.bfm_args.iteration = bfm_args['iteration']
+    args.bfm_args.dimension = bfm_args['dimension']
+    args.bfm_args.use_iu = bfm_args['use_iu']
+    args.bfm_args.use_ii = bfm_args['use_ii']
+    
     return args
 
 
@@ -93,6 +105,8 @@ def train(args):
         model = ALS_model(args)
     elif args.model_name == 'isvd+als':
         model = ISVD_ALS_model(args)
+    elif args.model_name == 'bfm':
+        model = BFM_model(args)
 
     model.train(df_train)
     model.predict(df_test)

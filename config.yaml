@@ -16,8 +16,8 @@ args:
     max_rate: 5
 
   experiment_args:
-    model_name: "isvd"
-    generate_submissions: True
+    model_name: "bfm"
+    generate_submissions: False
     submission_folder: ./output/submission
     verbose: True
 
@@ -42,3 +42,9 @@ args:
     lr_all: 0.003
     n_epochs: 100
     reg_all: 0.05
+  bfm_args:
+    algorithm: "regression"
+    iteration: 500 # 512
+    dimension: 10
+    use_iu: True
+    use_ii: True
