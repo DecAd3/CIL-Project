@@ -17,7 +17,7 @@ args:
 
   experiment_args:
     model_name: "bfm"
-    generate_submissions: False
+    generate_submissions: True
     submission_folder: ./output/submission
     verbose: True
 
@@ -43,7 +43,7 @@ args:
     n_epochs: 100
     reg_all: 0.05
   bfm_args:
-    algorithm: "regression"
+    algorithm: "oprobit" # regression, oprobit
     iteration: 500 # 512
     dimension: 10
     use_iu: True

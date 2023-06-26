@@ -1,5 +1,3 @@
-import argparse
-import pickle
 from typing import Dict, List, Union
 
 import numpy as np
@@ -16,7 +14,7 @@ from myfm.utils.callbacks.libfm import (
 )
 from myfm.utils.encoders import CategoryValueToSparseEncoder
 
-from utils import _load_data_for_BFM, _read_df_in_format, _convert_df_to_matrix, preprocess, postprocess, compute_rmse, generate_submission
+from utils import _load_data_for_BFM, _read_df_in_format
 
 class BFM_model:
     def __init__(self, args):
@@ -149,50 +147,48 @@ class BFM_model:
             unique_movies, movie_map = np.unique(source.movie_id, return_inverse=True)
             target.append(RelationBlock(movie_map, augment_movie_id(unique_movies)))
 
-        trace_path = "./output/bfm/rmse_{0}.csv".format(self.algorithm)
-
         callback: LibFMLikeCallbackBase
         fm: Union[MyFMRegressor, MyFMOrderedProbit]
+        callback = None
         if self.algorithm == "regression":
             fm = myfm.MyFMRegressor(rank=self.dimension)
-            callback = RegressionCallback(
-                self.iteration,
-                None,
-                df_test.rating.values,
-                X_rel_test=test_blocks,
-                clip_min=self.min_rate,
-                clip_max=self.max_rate,
-                trace_path=trace_path,
-            )
+            if not self.generate_submissions:
+                callback = RegressionCallback(
+                    self.iteration,
+                    None,
+                    df_test.rating.values,
+                    X_rel_test=test_blocks,
+                    clip_min=self.min_rate,
+                    clip_max=self.max_rate,
+                )
         else:
             fm = myfm.MyFMOrderedProbit(rank=self.dimension)
-            callback = OrderedProbitCallback(
-                self.iteration,
-                None,
-                df_test.rating.values,
-                n_class=5,
-                X_rel_test=test_blocks,
-                trace_path=trace_path,
-            )
+            if not self.generate_submissions:
+                callback = OrderedProbitCallback(
+                    self.iteration,
+                    None,
+                    df_test.rating.values,
+                    n_class=5,
+                    X_rel_test=test_blocks,
+                )
 
         fm.fit(
-            None,
+            None,   # auxilliary feature
             df_train.rating.values,
             X_rel=train_blocks,
             grouping=grouping,
-            n_iter=callback.n_iter,
+            n_iter=self.iteration,
             callback=callback,
-            n_kept_samples=1,
+            n_kept_samples=self.iteration,
         )
-        
-        # with open(
-        #     "./output/bfm/callback_result_{0}.pkl".format(self.algorithm), "wb"
-        # ) as ofs:
-        #     pickle.dump(callback, ofs)
 
         if self.generate_submissions:
-            result = fm.predict(None, X_rel = test_blocks).clip(self.min_rate, self.max_rate)
+            result = None
+            if self.algorithm == "regression":
+                result = (fm.predict(None, X_rel = test_blocks)).clip(self.min_rate, self.max_rate)
+            else:
+                result = (fm.predict(None, X_rel = test_blocks) + 1).clip(self.min_rate, self.max_rate)
             df = pd.read_csv(self.sample_data)
             df['Prediction'] = result
-            submission_file = self.submission_folder + '/bfm.csv'
+            submission_file = self.submission_folder + '/bfm_' + self.algorithm + '.csv'
             df.to_csv(submission_file, index=False)
