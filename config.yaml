@@ -33,7 +33,7 @@ args:
   isvd_args:
     imputation: "mean"
     num_iterations: 15
-    type: "nnr" # svp: Singular Value Projection, nnr: Nuclear Norm Relaxation
+    type: "svp" # svp: Singular Value Projection, nnr: Nuclear Norm Relaxation
     eta: 0.3
     rank: 9
     shrinkage: 38

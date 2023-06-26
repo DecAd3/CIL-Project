@@ -1,0 +1,5 @@
+Collecting PyYAML
+  Downloading PyYAML-6.0-cp39-cp39-win_amd64.whl (151 kB)
+     -------------------------------------- 151.6/151.6 kB 1.8 MB/s eta 0:00:00
+Installing collected packages: PyYAML
+Successfully installed PyYAML-6.0
