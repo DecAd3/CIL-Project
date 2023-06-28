@@ -83,7 +83,8 @@ def process_config(path):
     args.bfm_args.dimension = bfm_args['dimension']
     args.bfm_args.use_iu = bfm_args['use_iu']
     args.bfm_args.use_ii = bfm_args['use_ii']
-    
+    args.bfm_args.variational = bfm_args['variational']
+
     return args
 
 

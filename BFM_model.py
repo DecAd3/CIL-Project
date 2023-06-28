@@ -24,6 +24,7 @@ class BFM_model:
         self.dimension = args.bfm_args.dimension    # fm embedding dimension
         self.use_iu = args.bfm_args.use_iu          # Additional features."all users who have evaluated a movie in the train set"
         self.use_ii = args.bfm_args.use_ii          # Additional features."all movies rated by a user" as a feature of user/movie.
+        self.variational = args.bfm_args.variational
         self.seed_value = args.random_seed
         self.min_rate = args.min_rate
         self.max_rate = args.max_rate
@@ -151,7 +152,10 @@ class BFM_model:
         fm: Union[MyFMRegressor, MyFMOrderedProbit]
         callback = None
         if self.algorithm == "regression":
-            fm = myfm.MyFMRegressor(rank=self.dimension)
+            if self.variational:
+                fm = myfm.VariationalFMRegressor(rank=self.dimension, random_seed=self.seed_value)
+            else:
+                fm = myfm.MyFMRegressor(rank=self.dimension, random_seed=self.seed_value)
             if not self.generate_submissions:
                 callback = RegressionCallback(
                     self.iteration,
@@ -162,7 +166,9 @@ class BFM_model:
                     clip_max=self.max_rate,
                 )
         else:
-            fm = myfm.MyFMOrderedProbit(rank=self.dimension)
+            if self.variational:
+                raise ValueError('Variational infrence for ordinal regression is not available.')
+            fm = myfm.MyFMOrderedProbit(rank=self.dimension, random_seed=self.seed_value)
             if not self.generate_submissions:
                 callback = OrderedProbitCallback(
                     self.iteration,
@@ -179,7 +185,7 @@ class BFM_model:
             grouping=grouping,
             n_iter=self.iteration,
             callback=callback,
-            n_kept_samples=self.iteration,
+            # n_kept_samples=self.iteration,  ## todo: to be tested
         )
 
         if self.generate_submissions:
@@ -187,8 +193,11 @@ class BFM_model:
             if self.algorithm == "regression":
                 result = (fm.predict(None, X_rel = test_blocks)).clip(self.min_rate, self.max_rate)
             else:
-                result = (fm.predict(None, X_rel = test_blocks) + 1).clip(self.min_rate, self.max_rate)
+                result = (fm.predict_proba(None, X_rel = test_blocks).dot(np.arange(5)) + 1).clip(self.min_rate, self.max_rate)
             df = pd.read_csv(self.sample_data)
             df['Prediction'] = result
-            submission_file = self.submission_folder + '/bfm_' + self.algorithm + '.csv'
+            submission_file = self.submission_folder + '/bfm_' + self.algorithm + "_rank" + str(self.dimension)
+            if self.variational:
+                submission_file += '_variational'
+            submission_file += '.csv'
             df.to_csv(submission_file, index=False)
