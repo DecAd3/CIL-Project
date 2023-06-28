@@ -16,8 +16,8 @@ args:
     max_rate: 5
 
   experiment_args:
-    model_name: "bfm"
-    generate_submissions: False
+    model_name: "ncf"
+    generate_submissions: True
     submission_folder: ./output/submission
     verbose: True
 
@@ -48,3 +48,11 @@ args:
     dimension: 10
     use_iu: True
     use_ii: True
+  ncf_args:
+    EPOCHS: 20
+    BATCH_SIZE: 128
+    n_factors: 10
+    learning_rate: 0.001
+    train_file: ./data/ncf/actual.csv
+    save_file: ./data/ncf/submission_neural.csv
+    all_predictions_file: ./data/ncf/predictions_alle.csv

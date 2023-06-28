@@ -10,6 +10,7 @@ from ISVD_model import ISVD_model
 from ALS_model import ALS_model
 from ISVD_ALS_model import ISVD_ALS_model
 from BFM_model import BFM_model
+from neural import NCF_model
 
 
 def process_config(path):
@@ -83,6 +84,17 @@ def process_config(path):
     args.bfm_args.dimension = bfm_args['dimension']
     args.bfm_args.use_iu = bfm_args['use_iu']
     args.bfm_args.use_ii = bfm_args['use_ii']
+
+    # NCF arguments
+    ncf_args = data['args']['ncf_args']
+    args.ncf_args = argparse.Namespace()
+    args.ncf_args.EPOCHS = ncf_args['EPOCHS']
+    args.ncf_args.BATCH_SIZE = ncf_args['BATCH_SIZE']
+    args.ncf_args.n_factors = ncf_args['n_factors']
+    args.ncf_args.learning_rate = ncf_args['learning_rate']
+    args.ncf_args.train_file = ncf_args['train_file']
+    args.ncf_args.save_file = ncf_args['save_file']
+    args.ncf_args.all_predictions_file = ncf_args['all_predictions_file']
     
     return args
 
@@ -107,6 +119,8 @@ def train(args):
         model = ISVD_ALS_model(args)
     elif args.model_name == 'bfm':
         model = BFM_model(args)
+    elif args.model_name == 'ncf':
+        model = NCF_model(args)
 
     model.train(df_train)
     model.predict(df_test)
