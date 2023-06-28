@@ -84,6 +84,7 @@ def process_config(path):
     args.bfm_args.dimension = bfm_args['dimension']
     args.bfm_args.use_iu = bfm_args['use_iu']
     args.bfm_args.use_ii = bfm_args['use_ii']
+    args.bfm_args.variational = bfm_args['variational']
 
     # NCF arguments
     ncf_args = data['args']['ncf_args']
@@ -95,7 +96,7 @@ def process_config(path):
     args.ncf_args.train_file = ncf_args['train_file']
     args.ncf_args.save_file = ncf_args['save_file']
     args.ncf_args.all_predictions_file = ncf_args['all_predictions_file']
-    
+
     return args
 
 
