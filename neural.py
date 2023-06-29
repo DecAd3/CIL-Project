@@ -10,7 +10,7 @@ import numpy as np
 from recommenders.utils.timer import Timer
 from recommenders.ncf_singlenode import NCF
 from recommenders.dataset import Dataset as NCFDataset
-from utils import _read_df_in_format, _convert_df_to_matrix, preprocess, postprocess, generate_submission
+from utils import _read_df_in_format, _convert_df_to_matrix, preprocess, postprocess, generate_submission, compute_rmse
 
 
 class NCF_model:
@@ -25,13 +25,15 @@ class NCF_model:
         self.save_file = args.ncf_args.save_file
         self.all_predictions_file = args.ncf_args.all_predictions_file
         self.model = None
+        self.reconstructed = None
         self.data_mean = 0
         self.data_std = 0
         self.num_users = args.num_users
         self.num_items = args.num_items
+        self.generate_submissions = args.generate_submissions
 
-        if not args.generate_submissions:
-            raise NotImplementedError("Please don't do train-test split, I haven't tested it yet~ :)")
+        # if not args.generate_submissions:
+        #     raise NotImplementedError("Please don't do train-test split, I haven't tested it yet~ :)")
 
 
     def train(self, df_train):
@@ -84,7 +86,7 @@ class NCF_model:
         print("Took {} seconds for training.".format(train_time))
 
     def predict(self, df_test):
-
+        print("Predicting...")
         with Timer() as test_time:
             predictions = [[row, col, self.model.predict(row, col)]
                            for (row, col) in itertools.product(np.arange(self.num_users), np.arange(self.num_items))]
@@ -94,14 +96,23 @@ class NCF_model:
 
         print("Took {} seconds for prediction.".format(test_time.interval))
 
-        print("genarating submissions...")
-        reconstructed = np.zeros((self.num_users, self.num_items))
+        print("Reconstructing matrix...")
+        self.reconstructed = np.zeros((self.num_users, self.num_items))
         all_pred = pd.read_csv(self.all_predictions_file)
         for ind, row in all_pred.iterrows():
-            reconstructed[int(row.userID), int(row.itemID)] = row.prediction
+            self.reconstructed[int(row.userID), int(row.itemID)] = row.prediction
 
-        reconstructed = postprocess(reconstructed, self.data_mean, self.data_std)
-        generate_submission(self.sample_submission, self.save_file, reconstructed)
+        self.reconstructed = postprocess(self.reconstructed, self.data_mean, self.data_std)
+
+        if not self.generate_submissions:
+            print("Computing test loss...")
+            predictions = self.reconstructed[df_test['row'].values - 1, df_test['col'].values - 1]
+            labels = df_test['Prediction'].values
+            print('RMSE: {:.4f}'.format(compute_rmse(predictions, labels)))
+        else:
+            print("Genarating submissions...")
+            generate_submission(self.sample_submission, self.save_file, self.reconstructed)
+
 
 
 # if __name__ == '__main__':
