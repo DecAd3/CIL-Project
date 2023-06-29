@@ -1,3 +1,5 @@
+# part of the code is derived from the tutorial of Microsoft recommenders. https://github.com/microsoft/recommenders
+
 import itertools
 import sys
 import pandas as pd
@@ -27,6 +29,10 @@ class NCF_model:
         self.data_std = 0
         self.num_users = args.num_users
         self.num_items = args.num_items
+
+        if not args.generate_submissions:
+            raise NotImplementedError("Please don't do train-test split, I haven't tested it yet~ :)")
+
 
     def train(self, df_train):
         train_data, is_provided = _convert_df_to_matrix(df_train, self.num_users, self.num_items)
@@ -78,8 +84,6 @@ class NCF_model:
         print("Took {} seconds for training.".format(train_time))
 
     def predict(self, df_test):
-        if df_test is not None:
-            raise NotImplementedError("Please don't do train-test split :), I haven't tested it yet~")
 
         with Timer() as test_time:
             predictions = [[row, col, self.model.predict(row, col)]
