@@ -16,7 +16,7 @@ args:
     max_rate: 5
 
   experiment_args:
-    model_name: "bfm"
+    model_name: "isvd"
     generate_submissions: False
     submission_folder: ./output/submission
     verbose: True
