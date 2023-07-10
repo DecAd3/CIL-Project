@@ -10,6 +10,8 @@ from ISVD_model import ISVD_model
 from ALS_model import ALS_model
 from ISVD_ALS_model import ISVD_ALS_model
 from BFM_model import BFM_model
+from neural import NCF_model
+from VAE_model import VAE_model
 
 
 def process_config(path):
@@ -83,7 +85,32 @@ def process_config(path):
     args.bfm_args.dimension = bfm_args['dimension']
     args.bfm_args.use_iu = bfm_args['use_iu']
     args.bfm_args.use_ii = bfm_args['use_ii']
-    
+    args.bfm_args.variational = bfm_args['variational']
+
+    # NCF arguments
+    ncf_args = data['args']['ncf_args']
+    args.ncf_args = argparse.Namespace()
+    args.ncf_args.EPOCHS = ncf_args['EPOCHS']
+    args.ncf_args.BATCH_SIZE = ncf_args['BATCH_SIZE']
+    args.ncf_args.n_factors = ncf_args['n_factors']
+    args.ncf_args.learning_rate = ncf_args['learning_rate']
+    args.ncf_args.train_file = ncf_args['train_file']
+    args.ncf_args.save_file = ncf_args['save_file']
+    args.ncf_args.all_predictions_file = ncf_args['all_predictions_file']
+
+    # VAE arguments
+    vae_args = data['args']['vae_args']
+    args.vae_args = argparse.Namespace()
+    args.vae_args.num_iterations = vae_args['num_iterations']
+    args.vae_args.batch_size = vae_args['batch_size']
+    args.vae_args.hidden_dim = vae_args['hidden_dim']
+    args.vae_args.latent_dim = vae_args['latent_dim']
+    args.vae_args.dropout = vae_args['dropout']
+    args.vae_args.lr = vae_args['lr']
+    args.vae_args.weight_decay = vae_args['weight_decay']
+    args.vae_args.gamma = vae_args['gamma']
+    args.vae_args.beta = vae_args['beta']
+
     return args
 
 
@@ -107,6 +134,10 @@ def train(args):
         model = ISVD_ALS_model(args)
     elif args.model_name == 'bfm':
         model = BFM_model(args)
+    elif args.model_name == 'ncf':
+        model = NCF_model(args)
+    elif args.model_name == 'vae':
+        model = VAE_model(args, df_train, df_test)
 
     model.train(df_train)
     model.predict(df_test)

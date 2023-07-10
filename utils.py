@@ -4,7 +4,8 @@ from surprise import Dataset
 from surprise import Reader
 import math
 from sklearn.metrics import mean_squared_error
-
+import torch
+from torch.utils.data import DataLoader, TensorDataset
 
 def _read_df_in_format(root):
     def reformat_id(id):
@@ -54,11 +55,21 @@ def _load_data_for_surprise(df):
 
     return data_surprise
 
+
 def _load_data_for_BFM(df):
     df.rename(columns={'row': 'user_id'}, inplace=True)
     df.rename(columns={'col': 'movie_id'}, inplace=True)
     df.rename(columns={'Prediction': 'rating'}, inplace=True)
     return df
+
+
+def _load_data_for_VAE(arr, batch_size):
+    data = torch.tensor(np.ma.masked_equal(arr, 0).data).float()
+    mask = data != 0
+    indices = torch.arange(data.shape[0])
+    dataloader = DataLoader(TensorDataset(data, mask, indices), batch_size=batch_size, shuffle=True)
+    return dataloader, data, mask, indices
+
 
 def preprocess(arr, n_row, n_col, imputation):
     ### Column Normalization
