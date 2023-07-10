@@ -57,3 +57,9 @@ args:
     train_file: ./data/ncf/actual.csv
     save_file: ./data/ncf/submission_neural.csv
     all_predictions_file: ./data/ncf/predictions_alle.csv
+  ensemble_args:
+    fold_number: 5
+    shuffle: True
+    regressor: 'linear'
+    data_ensemble: './output/data_ensemble/'
+    models: ["xxx"]

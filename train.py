@@ -97,6 +97,14 @@ def process_config(path):
     args.ncf_args.save_file = ncf_args['save_file']
     args.ncf_args.all_predictions_file = ncf_args['all_predictions_file']
 
+    # ensemble arguments
+    ens_args = data['args']['ensemble_args']
+    args.ens_args = argparse.Namespace()
+    args.ens_args.fold_number = ens_args['fold_number']
+    args.ens_args.shuffle = ens_args['shuffle']
+    args.ens_args.regressor = ens_args['regressor']
+    args.ens_args.data_ensemble_folder = ens_args['data_ensemble']
+    args.ens_args.model_list = ens_args['models']
     return args
 
 
