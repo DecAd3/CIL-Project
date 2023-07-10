@@ -67,4 +67,9 @@ args:
     weight_decay: 0
     gamma: 0.997
     beta: 0.2
-
+  ensemble_args:
+    fold_number: 5
+    shuffle: True
+    regressor: 'linear'
+    data_ensemble: './output/data_ensemble/'
+    models: ["xxx"]
