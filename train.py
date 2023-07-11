@@ -120,8 +120,33 @@ def process_config(path):
     args.ens_args.data_ensemble_folder = ens_args['data_ensemble']
     args.ens_args.model_list = ens_args['models']
 
+    # cross validation arguments
+    cv_args = data['args']['cv_args']
+    args.cv_args = argparse.Namespace()
+    args.cv_args.fold_number = args.ens_args.fold_number
+    args.cv_args.cv_folder = args.ens_args.data_ensemble_folder
+    args.cv_args.save_full_pred = cv_args['save_full_pred']
+    args.cv_args.cv_model_name = args.model_name
     return args
 
+
+def get_model(args, df_train = None, df_test = None):
+    if args.model_name == 'svd':
+        return SVD_model(args)
+    elif args.model_name == 'svd++':
+        return SVDPP_model(args)
+    elif args.model_name == 'isvd':
+        return ISVD_model(args)
+    elif args.model_name == 'als':
+        return ALS_model(args)
+    elif args.model_name == 'isvd+als':
+        return ISVD_ALS_model(args)
+    elif args.model_name == 'bfm':
+        return BFM_model(args)
+    elif args.model_name == 'ncf':
+        return NCF_model(args)
+    elif args.model_name == 'vae':
+        return VAE_model(args, df_train, df_test)
 
 def train(args):
 
@@ -131,22 +156,7 @@ def train(args):
     else:
         df_train, df_test = df, None
 
-    if args.model_name == 'svd':
-        model = SVD_model(args)
-    elif args.model_name == 'svd++':
-        model = SVDPP_model(args)
-    elif args.model_name == 'isvd':
-        model = ISVD_model(args)
-    elif args.model_name == 'als':
-        model = ALS_model(args)
-    elif args.model_name == 'isvd+als':
-        model = ISVD_ALS_model(args)
-    elif args.model_name == 'bfm':
-        model = BFM_model(args)
-    elif args.model_name == 'ncf':
-        model = NCF_model(args)
-    elif args.model_name == 'vae':
-        model = VAE_model(args, df_train, df_test)
+    model = get_model(args, df_train, df_test)    
 
     model.train(df_train)
     model.predict(df_test)

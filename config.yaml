@@ -16,7 +16,7 @@ args:
     max_rate: 5
 
   experiment_args:
-    model_name: "vae"
+    model_name: "isvd"
     generate_submissions: False
     submission_folder: ./output/submission
     verbose: True
@@ -73,3 +73,5 @@ args:
     regressor: 'linear'
     data_ensemble: './output/data_ensemble/'
     models: ["xxx"]
+  cv_args:
+    save_full_pred: True

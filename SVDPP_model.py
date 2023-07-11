@@ -21,6 +21,8 @@ class SVDPP_model:
         self.reg_all = args.svdpp_args.reg_all
         self.generate_submissions = args.generate_submissions
         self.sample_data = args.sample_data
+        self.save_full_pred = args.cv_args.save_full_pred
+        self.cv_model_name = args.cv_args.cv_model_name
 
     def train(self, df_train):
         data = _load_data_for_surprise(df_train)
