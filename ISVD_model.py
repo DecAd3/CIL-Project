@@ -1,5 +1,6 @@
 import numpy as np
 from utils import _convert_df_to_matrix, preprocess, compute_rmse, generate_submission
+import os
 
 
 class ISVD_model:
@@ -11,6 +12,9 @@ class ISVD_model:
         self.eta = args.isvd_args.eta
         self.rank = args.isvd_args.rank
         self.shrinkage = args.isvd_args.shrinkage
+        self.save_full_pred = args.cv_args.save_full_pred
+        self.cv_model_name = args.cv_args.cv_model_name
+        self.data_ensemble_folder = args.ens_args.data_ensemble_folder
 
     def train(self, df_train):
         print("Start training Iterative-SVD model ...")
@@ -41,6 +45,9 @@ class ISVD_model:
                 At = At.clip(min=1, max=5)
                 print("Iteration {}/{} finished. ".format(i+1, self.num_iterations))
             self.reconstructed_matrix = At
+
+        if self.save_full_pred:
+            np.savetxt(os.path.join('.', self.data_ensemble_folder, self.cv_model_name + '_pred_full.txt'), self.reconstructed_matrix)
 
         print("Training ends. ")
 
