@@ -12,3 +12,9 @@
 
 # pycache
 /__pycache__
+
+.idea
+
+*.pyc
+
+6.0
