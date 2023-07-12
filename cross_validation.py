@@ -6,8 +6,13 @@ from sklearn.model_selection import KFold
 
 def cross_validation(args):
     df = _read_df_in_format(args.train_data)
+    df_submission_test = None
+    if args.cv_args.save_full_pred:
+        df_submission_test = _read_df_in_format(args.sample_data)
     cv_folder = args.cv_args.cv_folder
     model_name = args.model_name
+    model_instance_name = args.model_instance_name
+
     if not os.path.exists(cv_folder):
         os.makedirs(cv_folder)
     
@@ -18,10 +23,16 @@ def cross_validation(args):
         df_test = df.iloc[test_idx.tolist()]
 
         print('Fold {}: Number of training sumples: {}, number of test samples: {}.'.format(idx+1, len(df_train), len(df_test)))
-        args.cv_args.cv_model_name = model_name + '_fold_' + str(idx)
+
+        model_name_base = model_instance_name + '_fold_' + str(idx)
+        # args.cv_args.cv_model_name = model_instance_name + '_fold_' + str(idx)
 
         model = get_model(args, df_train, df_test)
         model.train(df_train)
+        args.cv_args.cv_model_name = model_name_base + "_train.txt"
+        model.predict(df, pred_file_name = args.cv_args.cv_model_name)
+        args.cv_args.cv_model_name = model_name_base + "_test.txt"
+        model.predict(df_submission_test, pred_file_name = args.cv_args.cv_model_name)
 
 if __name__ == '__main__':
     args = process_config(sys.argv[1])

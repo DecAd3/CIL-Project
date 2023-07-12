@@ -16,7 +16,8 @@ args:
     max_rate: 5
 
   experiment_args:
-    model_name: "isvd"
+    model_name: "bfm"
+    model_instance_name: "bfm_op_novar_500_32"
     generate_submissions: False
     submission_folder: ./output/submission
     verbose: True
@@ -72,6 +73,6 @@ args:
     shuffle: True
     regressor: 'linear'
     data_ensemble: './output/data_ensemble/'
-    models: ["xxx"]
+    models: ["isvd"]
   cv_args:
     save_full_pred: True

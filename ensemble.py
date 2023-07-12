@@ -3,7 +3,7 @@ from sklearn.model_selection import KFold
 from sklearn.linear_model import LinearRegression
 from utils import compute_rmse, postprocess
 
-class Ensemble:
+class Ensemble_Model:
     def __init__(self, args):
         self.fold_number = args.ens_args.fold_number
         self.shuffle = args.ens_args.shuffle

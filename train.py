@@ -12,6 +12,7 @@ from ISVD_ALS_model import ISVD_ALS_model
 from BFM_model import BFM_model
 from neural import NCF_model
 from VAE_model import VAE_model
+from ensemble import Ensemble_Model
 
 
 def process_config(path):
@@ -41,6 +42,7 @@ def process_config(path):
     # Experiment arguments
     experiment_args = data['args']['experiment_args']
     args.model_name = experiment_args['model_name']
+    args.model_instance_name = experiment_args['model_instance_name']
     args.generate_submissions = experiment_args['generate_submissions']
     args.submission_folder = experiment_args['submission_folder']
     args.verbose = experiment_args['verbose']
@@ -126,7 +128,7 @@ def process_config(path):
     args.cv_args.fold_number = args.ens_args.fold_number
     args.cv_args.cv_folder = args.ens_args.data_ensemble_folder
     args.cv_args.save_full_pred = cv_args['save_full_pred']
-    args.cv_args.cv_model_name = args.model_name
+    args.cv_args.cv_model_name = args.model_instance_name
     return args
 
 
@@ -147,6 +149,8 @@ def get_model(args, df_train = None, df_test = None):
         return NCF_model(args)
     elif args.model_name == 'vae':
         return VAE_model(args, df_train, df_test)
+    elif args.model_name == 'ensemble':
+        return Ensemble_Model(args)
 
 def train(args):
 

@@ -46,12 +46,15 @@ class ISVD_model:
                 print("Iteration {}/{} finished. ".format(i+1, self.num_iterations))
             self.reconstructed_matrix = At
 
-        if self.save_full_pred:
-            np.savetxt(os.path.join('.', self.data_ensemble_folder, self.cv_model_name + '_pred_full.txt'), self.reconstructed_matrix)
+        # if self.save_full_pred:
+        #     np.savetxt(os.path.join('.', self.data_ensemble_folder, self.cv_model_name + '_pred_full.txt'), self.reconstructed_matrix)
 
         print("Training ends. ")
 
-    def predict(self, df_test):
+    def predict(self, df_test, pred_file_name = None):
+        if self.save_full_pred:
+            predictions = self.reconstructed_matrix[df_test['row'].values - 1, df_test['col'].values - 1]
+            np.savetxt(os.path.join('.', self.data_ensemble_folder, pred_file_name), predictions)
         if not self.args.generate_submissions:
             predictions = self.reconstructed_matrix[df_test['row'].values - 1, df_test['col'].values - 1]
             labels = df_test['Prediction'].values

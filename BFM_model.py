@@ -3,6 +3,7 @@ from typing import Dict, List, Union
 import numpy as np
 import pandas as pd
 from scipy import sparse as sps
+import os
 
 import myfm
 from myfm import MyFMOrderedProbit, MyFMRegressor, RelationBlock
@@ -31,11 +32,14 @@ class BFM_model:
         self.generate_submissions = args.generate_submissions
         self.sample_data = args.sample_data
         self.submission_folder = args.submission_folder
+        self.save_full_pred = args.cv_args.save_full_pred
+        self.cv_model_name = args.cv_args.cv_model_name
+        self.data_ensemble_folder = args.ens_args.data_ensemble_folder
 
     def train(self, df_train):
         self.df_train = df_train
 
-    def predict(self, df_test):
+    def predict(self, df_test, pred_file_name = None):
         np.random.seed(self.seed_value)
         df_train = self.df_train
         df_train = _load_data_for_BFM(df_train)
@@ -188,12 +192,16 @@ class BFM_model:
             # n_kept_samples=self.iteration,  ## todo: to be tested
         )
 
+        result = None
+        if self.algorithm == "regression":
+            result = (fm.predict(None, X_rel = test_blocks)).clip(self.min_rate, self.max_rate)
+        else:
+            result = (fm.predict_proba(None, X_rel = test_blocks).dot(np.arange(5)) + 1).clip(self.min_rate, self.max_rate)
+
+        if self.save_full_pred:
+            np.savetxt(os.path.join('.', self.data_ensemble_folder, pred_file_name), result)
+
         if self.generate_submissions:
-            result = None
-            if self.algorithm == "regression":
-                result = (fm.predict(None, X_rel = test_blocks)).clip(self.min_rate, self.max_rate)
-            else:
-                result = (fm.predict_proba(None, X_rel = test_blocks).dot(np.arange(5)) + 1).clip(self.min_rate, self.max_rate)
             df = pd.read_csv(self.sample_data)
             df['Prediction'] = result
             submission_file = self.submission_folder + '/bfm_' + self.algorithm + "_rank" + str(self.dimension)
