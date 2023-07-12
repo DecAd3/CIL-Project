@@ -77,7 +77,7 @@ def preprocess(arr, n_row, n_col, imputation):
     return imputed_arr, mean_cols, std_cols
 
 
-def postprocess(raw_predictions, data_mean, data_std, min_rate = 1, max_rate = 5, denorm = True):
+def postprocess(raw_predictions, data_mean = None, data_std = None, min_rate = 1, max_rate = 5, denorm = True):
     denormalized_predictions = raw_predictions
     if denorm:
         denormalized_predictions = raw_predictions * data_std + data_mean

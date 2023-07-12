@@ -1,7 +1,7 @@
 import numpy as np
 from sklearn.model_selection import KFold
 from sklearn.linear_model import LinearRegression
-from utils import compute_rmse
+from utils import compute_rmse, postprocess
 
 class Ensemble:
     def __init__(self, args):
@@ -60,4 +60,5 @@ class Ensemble:
             pred_ins = self.regressors[fold_index].predict(pred_test_all)
             predict_res = np.hstack((predict_res, pred_ins))
         predict_res = np.mean(predict_res, axis=1)
+        predict_res = postprocess(predict_res, denorm=False)
         return predict_res 
