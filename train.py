@@ -1,6 +1,7 @@
 import sys
 import yaml
 import argparse
+import os
 from utils import _read_df_in_format
 from sklearn.model_selection import train_test_split
 
@@ -160,12 +161,16 @@ def train(args):
     else:
         df_train, df_test = df, None
 
-    model = get_model(args, df_train, df_test)    
-
+    model = get_model(args, df_train, df_test)
     model.train(df_train)
     model.predict(df_test)
 
 
 if __name__ == '__main__':
     args = process_config(sys.argv[1])
+
+    output_dir = "output/submission"
+    if not os.path.exists(output_dir):
+        os.makedirs(output_dir)
+
     train(args)
