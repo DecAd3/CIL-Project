@@ -169,8 +169,7 @@ def train(args):
 if __name__ == '__main__':
     args = process_config(sys.argv[1])
 
-    output_dir = "output/submission"
-    if not os.path.exists(output_dir):
-        os.makedirs(output_dir)
+    if not os.path.exists(args.submission_folder):
+        os.makedirs(args.submission_folder)
 
     train(args)
