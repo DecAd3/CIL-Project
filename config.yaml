@@ -5,9 +5,9 @@ args:
     num_users: 10000
     num_items: 1000
     test_size: 0.1
-    test_save_dir: ./output/logs/output
-    model_load_path: ./output/models
-    model_save_path: ./output/models
+#    test_save_dir: ./output/logs/output
+#    model_load_path: ./output/models
+#    model_save_path: ./output/models
     random_seed: 42
     device: "cpu"
     min_rate: 1
@@ -16,7 +16,7 @@ args:
   experiment_args:
     model_name: "bfm"
     model_instance_name: "bfm_op_novar_500_32"
-    generate_submissions: False
+    generate_submissions: True
     submission_folder: ./output/submission
     verbose: True
 
