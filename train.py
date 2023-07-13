@@ -35,7 +35,6 @@ def process_config(path):
     args.model_save_path = training_args['model_save_path']
     args.random_seed = training_args['random_seed']
     args.device = training_args['device']
-    args.normalization = training_args['normalization']
     args.imputation = training_args['imputation']
     args.min_rate = training_args['min_rate']
     args.max_rate = training_args['max_rate']
