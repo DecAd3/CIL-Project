@@ -10,8 +10,6 @@ args:
     model_save_path: ./output/models
     random_seed: 42
     device: "cpu"
-    imputation: "zero"
-    normalization: "zscore"
     min_rate: 1
     max_rate: 5
 

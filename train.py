@@ -35,7 +35,6 @@ def process_config(path):
     args.model_save_path = training_args['model_save_path']
     args.random_seed = training_args['random_seed']
     args.device = training_args['device']
-    args.imputation = training_args['imputation']
     args.min_rate = training_args['min_rate']
     args.max_rate = training_args['max_rate']
 
@@ -51,6 +50,7 @@ def process_config(path):
     svd_args = data['args']['svd_args']
     args.svd_args = argparse.Namespace()
     args.svd_args.rank = svd_args['rank']
+    args.svd_args.imputation = svd_args['imputation']
 
     # ALS arguments
     als_args = data['args']['als_args']
@@ -135,7 +135,7 @@ def process_config(path):
 def get_model(args, df_train = None, df_test = None):
     if args.model_name == 'svd':
         return SVD_model(args)
-    elif args.model_name == 'svd++':
+    elif args.model_name == 'svdpp':
         return SVDPP_model(args)
     elif args.model_name == 'isvd':
         return ISVD_model(args)
