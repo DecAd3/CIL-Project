@@ -1,6 +1,10 @@
 import numpy as np
 from sklearn.model_selection import KFold
-from sklearn.linear_model import LinearRegression
+from sklearn.linear_model import LinearRegression, SGDRegressor, ElasticNet, BayesianRidge
+from sklearn.kernel_ridge import KernelRidge
+from sklearn.ensemble import GradientBoostingRegressor
+from sklearn.svm import SVR
+# from lightgbm import LGBMRegressor
 from utils import compute_rmse, postprocess, _read_df_in_format
 import pandas as pd
 
@@ -20,6 +24,18 @@ class Ensemble_Model:
     def get_regressor(self):
         if self.regressor == 'linear':
             return LinearRegression()
+        elif self.regressor == 'SGD':
+            return SGDRegressor()
+        elif self.regressor == 'ElasticNet':
+            return ElasticNet()
+        elif self.regressor == 'BayesianRidge':
+            return BayesianRidge()
+        elif self.regressor == 'KernelRidge':
+            return KernelRidge()
+        elif self.regressor == 'GradientBoost':
+            return GradientBoostingRegressor()
+        elif self.regressor == 'SVR':
+            return SVR()
         raise ValueError("illegal regressor type provided")
     
     def obtain_predictions_from_all_models_in_one_ensemble(self, train_indices, test_indices, fold_index, mode = "train"):
@@ -45,9 +61,11 @@ class Ensemble_Model:
                 pred_test_all[:, model_idx] = pred_test
         return pred_train_all, pred_test_all
 
-    def train(self, df_train, df_test = None):
+    def train(self, df_train):
         assert(self.fold_number >= 2)
         kf = KFold(n_splits=self.fold_number, shuffle=self.shuffle, random_state=self.seed_value)
+        rmse_total = 0.0
+        print("Start training ensemble ...")
         for fold_index, (train_index, test_index) in enumerate(kf.split(df_train)):
             df_train_fold = df_train.iloc[train_index.tolist()]
             df_test_fold = df_train.iloc[test_index.tolist()]
@@ -57,7 +75,11 @@ class Ensemble_Model:
             reg = self.get_regressor().fit(pred_train_all, gt_train)
             testing = reg.predict(pred_test_all)
             self.regressors.append(reg)
-            print('RMSE (fold - {}): {:.4f}'.format(fold_index, compute_rmse(testing, gt_test)))
+            rmse_local = compute_rmse(testing, gt_test)
+            print('RMSE (fold - {}): {:.4f}'.format(fold_index, rmse_local))
+            rmse_total += rmse_local
+        rmse_avg = rmse_total / self.fold_number
+        print('Mean RMSE: {:.4f}'.format(rmse_avg))
         predict_whole_train = self.predict(df_train, mode = "train")
         gt_whole_train = df_train['Prediction'].values
         print('RMSE (whole training dataset): {:.4f}'.format(compute_rmse(predict_whole_train, gt_whole_train)))
@@ -77,7 +99,7 @@ class Ensemble_Model:
         if self.generate_submissions and mode == "test":
             df = pd.read_csv(self.sample_data)
             df['Prediction'] = predict_res
-            submission_file = self.submission_folder + '/ensemble_' + str(self.model_list) + "_" + str (self.fold_number) + "_" + self.regressor
+            submission_file = self.submission_folder + '/ensemble_' + self.regressor + "_" + str(self.model_list) + "_" + str (self.fold_number) 
             submission_file += '.csv'
             df.to_csv(submission_file, index=False)
         return predict_res 

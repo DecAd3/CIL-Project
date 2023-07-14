@@ -14,9 +14,9 @@ args:
     max_rate: 5
 
   experiment_args:
-    model_name: "bfm"
-    model_instance_name: "bfm_reg_var_500_32"
-    generate_submissions: False
+    model_name: "ensemble"
+    model_instance_name: "svdpp"
+    generate_submissions: True
     submission_folder: ./output/submission
     verbose: True
 
@@ -69,8 +69,8 @@ args:
   ensemble_args:
     fold_number: 5
     shuffle: True
-    regressor: 'linear'
+    regressor: 'GradientBoost'
     data_ensemble: './output/data_ensemble/'
-    models: ["bfm_op_novar_10_32", "bfm_reg_novar_10_32"]
+    models: ["als", "isvd", "svdpp"] # "bfm_reg_var_500_32", "bfm_op_novar_500_32", "bfm_reg_novar_500_32"
   cv_args:
-    save_full_pred: True # True
+    save_full_pred: False # True

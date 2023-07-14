@@ -59,7 +59,6 @@ class ISVD_model:
             predictions = self.reconstructed_matrix[df_test['row'].values - 1, df_test['col'].values - 1]
             labels = df_test['Prediction'].values
             print('RMSE: {:.4f}'.format(compute_rmse(predictions, labels)))
-
         else:
             submission_file = self.args.submission_folder + "/isvd.csv"
             generate_submission(self.args.sample_data, submission_file, self.reconstructed_matrix)
