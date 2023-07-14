@@ -1,6 +1,7 @@
 import sys
 import yaml
 import argparse
+import os
 from utils import _read_df_in_format
 from sklearn.model_selection import train_test_split
 
@@ -29,13 +30,11 @@ def process_config(path):
     args.num_users = training_args['num_users']
     args.num_items = training_args['num_items']
     args.test_size = training_args['test_size']
-    args.test_save_dir = training_args['test_save_dir']
-    args.model_load_path = training_args['model_load_path']
-    args.model_save_path = training_args['model_save_path']
+    # args.test_save_dir = training_args['test_save_dir']
+    # args.model_load_path = training_args['model_load_path']
+    # args.model_save_path = training_args['model_save_path']
     args.random_seed = training_args['random_seed']
     args.device = training_args['device']
-    args.normalization = training_args['normalization']
-    args.imputation = training_args['imputation']
     args.min_rate = training_args['min_rate']
     args.max_rate = training_args['max_rate']
 
@@ -51,6 +50,7 @@ def process_config(path):
     svd_args = data['args']['svd_args']
     args.svd_args = argparse.Namespace()
     args.svd_args.rank = svd_args['rank']
+    args.svd_args.imputation = svd_args['imputation']
 
     # ALS arguments
     als_args = data['args']['als_args']
@@ -135,7 +135,7 @@ def process_config(path):
 def get_model(args, df_train = None, df_test = None):
     if args.model_name == 'svd':
         return SVD_model(args)
-    elif args.model_name == 'svd++':
+    elif args.model_name == 'svdpp':
         return SVDPP_model(args)
     elif args.model_name == 'isvd':
         return ISVD_model(args)
@@ -166,4 +166,8 @@ def train(args):
     
 if __name__ == '__main__':
     args = process_config(sys.argv[1])
+
+    if not os.path.exists(args.submission_folder):
+        os.makedirs(args.submission_folder)
+
     train(args)
