@@ -1,7 +1,8 @@
 import numpy as np
 from sklearn.model_selection import KFold
 from sklearn.linear_model import LinearRegression
-from utils import compute_rmse, postprocess
+from utils import compute_rmse, postprocess, _read_df_in_format
+import pandas as pd
 
 class Ensemble_Model:
     def __init__(self, args):
@@ -12,53 +13,71 @@ class Ensemble_Model:
         self.model_list = args.ens_args.model_list
         self.seed_value = args.random_seed
         self.regressors = []
+        self.generate_submissions = args.generate_submissions
+        self.sample_data = args.sample_data
+        self.submission_folder = args.submission_folder
 
     def get_regressor(self):
         if self.regressor == 'linear':
             return LinearRegression()
         raise ValueError("illegal regressor type provided")
     
-    def obtain_predictions_from_all_models_in_one_ensemble(self, df_train_fold, df_test_fold, fold_index):
+    def obtain_predictions_from_all_models_in_one_ensemble(self, train_indices, test_indices, fold_index, mode = "train"):
         pred_train_all = None
-        if df_train_fold is not None:
-            pred_train_all = np.empty((0, 0))
         pred_test_all = None
-        if df_test_fold is not None:
-            pred_test_all = np.empty((0, 0))
-        for model_name in self.model_list:
-            pred_fn = self.data_ensemble_folder + model_name + "_" + str(fold_index) + '.txt'
-            pred_ins = np.loadtxt(pred_fn) # check type, shape
-            if df_train_fold is not None:
-                pred_train = pred_ins[df_train_fold['row'].values - 1, df_train_fold['col'].values - 1]
-                pred_train_all = np.hstack((pred_train_all, pred_train))
-            if df_test_fold is not None:
-                pred_test = pred_ins[df_test_fold['row'].values - 1, df_test_fold['col'].values - 1]
-                pred_test_all = np.hstack((pred_test_all, pred_test))
+        for model_idx in range(len(self.model_list)):
+            model_name = self.model_list[model_idx]
+            pred_fn = self.data_ensemble_folder + model_name + "_fold_" + str(fold_index) + "_" + mode + '.txt'
+            pred_ins = np.loadtxt(pred_fn) # check type, shape 
+            
+            pred_train = None
+            if train_indices is not None:
+                pred_train = pred_ins[train_indices]
+            else:
+                pred_train = pred_ins
+            if pred_train_all is None:
+                pred_train_all = np.empty((pred_train.shape[0], len(self.model_list)))
+            pred_train_all[:, model_idx] = pred_train
+            if test_indices is not None:
+                pred_test = pred_ins[test_indices]
+                if pred_test_all is None:
+                    pred_test_all = np.empty((pred_test.shape[0], len(self.model_list)))
+                pred_test_all[:, model_idx] = pred_test
         return pred_train_all, pred_test_all
 
-    def train(self, df_train):
+    def train(self, df_train, df_test = None):
         assert(self.fold_number >= 2)
         kf = KFold(n_splits=self.fold_number, shuffle=self.shuffle, random_state=self.seed_value)
         for fold_index, (train_index, test_index) in enumerate(kf.split(df_train)):
-            df_train_fold = df_train[train_index]
-            df_test_fold = df_train[test_index]
-            pred_train_all, pred_test_all = self.obtain_predictions_from_all_models_in_one_ensemble(df_train_fold, df_test_fold, fold_index)
+            df_train_fold = df_train.iloc[train_index.tolist()]
+            df_test_fold = df_train.iloc[test_index.tolist()]
+            pred_train_all, pred_test_all = self.obtain_predictions_from_all_models_in_one_ensemble(train_index.tolist(), test_index.tolist(), fold_index)
             gt_train = df_train_fold['Prediction'].values
             gt_test = df_test_fold['Prediction'].values
             reg = self.get_regressor().fit(pred_train_all, gt_train)
             testing = reg.predict(pred_test_all)
             self.regressors.append(reg)
-            print('RMSE (fold - {i}): {:.4f}'.format(fold_index, compute_rmse(testing, gt_test)))
-        predict_whole_train = self.predict(df_train)
+            print('RMSE (fold - {}): {:.4f}'.format(fold_index, compute_rmse(testing, gt_test)))
+        predict_whole_train = self.predict(df_train, mode = "train")
         gt_whole_train = df_train['Prediction'].values
         print('RMSE (whole training dataset): {:.4f}'.format(compute_rmse(predict_whole_train, gt_whole_train)))
 
-    def predict(self, df_test):
-        predict_res = np.empty((0, 0))
-        for fold_index in self.fold_number:
-            _, pred_test_all = self.obtain_predictions_from_all_models_in_one_ensemble(None, df_test, fold_index)
-            pred_ins = self.regressors[fold_index].predict(pred_test_all)
-            predict_res = np.hstack((predict_res, pred_ins))
+    def predict(self, df_test = None, mode = "test"):
+        # if self.generate_submissions:
+        #     df_test = _read_df_in_format(self.sample_data)
+        predict_res = None
+        for fold_index in range(self.fold_number):
+            pred, _ = self.obtain_predictions_from_all_models_in_one_ensemble(None, None, fold_index, mode = mode)
+            pred_ins = self.regressors[fold_index].predict(pred)
+            if predict_res is None:
+                predict_res = np.empty((pred.shape[0], self.fold_number))
+            predict_res[:, fold_index] = pred_ins
         predict_res = np.mean(predict_res, axis=1)
         predict_res = postprocess(predict_res, denorm=False)
+        if self.generate_submissions and mode == "test":
+            df = pd.read_csv(self.sample_data)
+            df['Prediction'] = predict_res
+            submission_file = self.submission_folder + '/ensemble_' + str(self.model_list) + "_" + str (self.fold_number) + "_" + self.regressor
+            submission_file += '.csv'
+            df.to_csv(submission_file, index=False)
         return predict_res 

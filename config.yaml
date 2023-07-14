@@ -17,7 +17,7 @@ args:
 
   experiment_args:
     model_name: "bfm"
-    model_instance_name: "bfm_op_novar_500_32"
+    model_instance_name: "bfm_reg_var_500_32"
     generate_submissions: False
     submission_folder: ./output/submission
     verbose: True
@@ -44,9 +44,9 @@ args:
     n_epochs: 100
     reg_all: 0.05
   bfm_args:
-    algorithm: "oprobit" # regression, oprobit
-    variational: False
-    iteration: 500 # 512
+    algorithm: "regression" # regression, oprobit
+    variational: True
+    iteration: 500 # 500 # 512
     dimension: 32
     use_iu: True
     use_ii: True
@@ -73,6 +73,6 @@ args:
     shuffle: True
     regressor: 'linear'
     data_ensemble: './output/data_ensemble/'
-    models: ["isvd"]
+    models: ["bfm_op_novar_10_32", "bfm_reg_novar_10_32"]
   cv_args:
-    save_full_pred: True
+    save_full_pred: True # True

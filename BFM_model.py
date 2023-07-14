@@ -35,21 +35,74 @@ class BFM_model:
         self.save_full_pred = args.cv_args.save_full_pred
         self.cv_model_name = args.cv_args.cv_model_name
         self.data_ensemble_folder = args.ens_args.data_ensemble_folder
+        self.fm = None
+        self.movie_vs_watched = None
+        self.user_vs_watched = None
+        self.movie_to_internal = None
+        self.user_to_internal = None
 
-    def train(self, df_train):
-        self.df_train = df_train
+    def augment_user_id(self, user_ids: List[int]) -> sps.csr_matrix:
+            X = self.user_to_internal.to_sparse(user_ids)
+            if not self.use_iu:
+                return X
+            data: List[float] = []
+            row: List[int] = []
+            col: List[int] = []
+            for index, user_id in enumerate(user_ids):
+                watched_movies = self.user_vs_watched.get(user_id, [])
+                normalizer = 1 / max(len(watched_movies), 1) ** 0.5
+                for mid in watched_movies:
+                    data.append(normalizer)
+                    col.append(self.movie_to_internal[mid])
+                    row.append(index)
+            return sps.hstack(
+                [
+                    X,
+                    sps.csr_matrix(
+                        (data, (row, col)),
+                        shape=(len(user_ids), len(self.movie_to_internal)),
+                    ),
+                ],
+                format="csr",
+            )
+    
+    def augment_movie_id(self, movie_ids: List[int]):
+            X = self.movie_to_internal.to_sparse(movie_ids)
+            if not self.use_ii:
+                return X
 
-    def predict(self, df_test, pred_file_name = None):
+            data: List[float] = []
+            row: List[int] = []
+            col: List[int] = []
+
+            for index, movie_id in enumerate(movie_ids):
+                watched_users = self.movie_vs_watched.get(movie_id, [])
+                normalizer = 1 / max(len(watched_users), 1) ** 0.5
+                for uid in watched_users:
+                    data.append(normalizer)
+                    row.append(index)
+                    col.append(self.user_to_internal[uid])
+            return sps.hstack(
+                [
+                    X,
+                    sps.csr_matrix(
+                        (data, (row, col)),
+                        shape=(len(movie_ids), len(self.user_to_internal)),
+                    ),
+                ]
+            )
+    
+    def train(self, df_train):  # , df_test = None
+        # self.df_train = df_train.copy(deep = True)
         np.random.seed(self.seed_value)
-        df_train = self.df_train
+        # df_train = self.df_train
         df_train = _load_data_for_BFM(df_train)
-        if self.generate_submissions:
-            df_test = _read_df_in_format(self.sample_data)
-        df_test = _load_data_for_BFM(df_test)
-
+        # if df_test is not None:
+        #     df_test = _load_data_for_BFM(df_test)
+        
         if self.algorithm == "oprobit":
             # interpret the rating (1, 2, 3, 4, 5) as class (0, 1, 2, 3, 4).
-            for df_ in [df_train, df_test]:
+            for df_ in [df_train]:  # , df_test
                 df_["rating"] -= 1
                 df_["rating"] = df_.rating.astype(np.int32)
 
@@ -62,7 +115,7 @@ class BFM_model:
         )
 
         print(
-            "df_train.shape = {}, df_test.shape = {}".format(df_train.shape, df_test.shape)
+            "df_train.shape = {}".format(df_train.shape)    # , df_test.shape
         )
 
         movie_vs_watched: Dict[int, List[int]] = dict()
@@ -92,65 +145,19 @@ class BFM_model:
 
         grouping = [i for i, size in enumerate(feature_group_sizes) for _ in range(size)]
 
-        def augment_user_id(user_ids: List[int]) -> sps.csr_matrix:
-            X = user_to_internal.to_sparse(user_ids)
-            if not self.use_iu:
-                return X
-            data: List[float] = []
-            row: List[int] = []
-            col: List[int] = []
-            for index, user_id in enumerate(user_ids):
-                watched_movies = user_vs_watched.get(user_id, [])
-                normalizer = 1 / max(len(watched_movies), 1) ** 0.5
-                for mid in watched_movies:
-                    data.append(normalizer)
-                    col.append(movie_to_internal[mid])
-                    row.append(index)
-            return sps.hstack(
-                [
-                    X,
-                    sps.csr_matrix(
-                        (data, (row, col)),
-                        shape=(len(user_ids), len(movie_to_internal)),
-                    ),
-                ],
-                format="csr",
-            )
-
-        def augment_movie_id(movie_ids: List[int]):
-            X = movie_to_internal.to_sparse(movie_ids)
-            if not self.use_ii:
-                return X
-
-            data: List[float] = []
-            row: List[int] = []
-            col: List[int] = []
-
-            for index, movie_id in enumerate(movie_ids):
-                watched_users = movie_vs_watched.get(movie_id, [])
-                normalizer = 1 / max(len(watched_users), 1) ** 0.5
-                for uid in watched_users:
-                    data.append(normalizer)
-                    row.append(index)
-                    col.append(user_to_internal[uid])
-            return sps.hstack(
-                [
-                    X,
-                    sps.csr_matrix(
-                        (data, (row, col)),
-                        shape=(len(movie_ids), len(user_to_internal)),
-                    ),
-                ]
-            )
+        self.movie_vs_watched = movie_vs_watched
+        self.user_vs_watched = user_vs_watched
+        self.movie_to_internal = movie_to_internal
+        self.user_to_internal = user_to_internal
 
         # Create RelationBlock.
         train_blocks: List[RelationBlock] = []
         test_blocks: List[RelationBlock] = []
-        for source, target in [(df_train, train_blocks), (df_test, test_blocks)]:
+        for source, target in [(df_train, train_blocks)]:   # , (df_test, test_blocks)
             unique_users, user_map = np.unique(source.user_id, return_inverse=True)
-            target.append(RelationBlock(user_map, augment_user_id(unique_users)))
+            target.append(RelationBlock(user_map, self.augment_user_id(unique_users)))
             unique_movies, movie_map = np.unique(source.movie_id, return_inverse=True)
-            target.append(RelationBlock(movie_map, augment_movie_id(unique_movies)))
+            target.append(RelationBlock(movie_map, self.augment_movie_id(unique_movies)))
 
         callback: LibFMLikeCallbackBase
         fm: Union[MyFMRegressor, MyFMOrderedProbit]
@@ -160,27 +167,27 @@ class BFM_model:
                 fm = myfm.VariationalFMRegressor(rank=self.dimension, random_seed=self.seed_value)
             else:
                 fm = myfm.MyFMRegressor(rank=self.dimension, random_seed=self.seed_value)
-            if not self.generate_submissions:
-                callback = RegressionCallback(
-                    self.iteration,
-                    None,
-                    df_test.rating.values,
-                    X_rel_test=test_blocks,
-                    clip_min=self.min_rate,
-                    clip_max=self.max_rate,
-                )
+            # if df_test is not None: # not self.generate_submissions and pred_file_name is None:
+            #     callback = RegressionCallback(
+            #         self.iteration,
+            #         None,
+            #         df_test.rating.values,
+            #         X_rel_test=test_blocks,
+            #         clip_min=self.min_rate,
+            #         clip_max=self.max_rate,
+            #     )
         else:
             if self.variational:
                 raise ValueError('Variational infrence for ordinal regression is not available.')
             fm = myfm.MyFMOrderedProbit(rank=self.dimension, random_seed=self.seed_value)
-            if not self.generate_submissions:
-                callback = OrderedProbitCallback(
-                    self.iteration,
-                    None,
-                    df_test.rating.values,
-                    n_class=5,
-                    X_rel_test=test_blocks,
-                )
+            # if df_test is not None:# not self.generate_submissions and pred_file_name is None:
+            #     callback = OrderedProbitCallback(
+            #         self.iteration,
+            #         None,
+            #         df_test.rating.values,
+            #         n_class=5,
+            #         X_rel_test=test_blocks,
+            #     )
 
         fm.fit(
             None,   # auxilliary feature
@@ -191,15 +198,26 @@ class BFM_model:
             callback=callback,
             # n_kept_samples=self.iteration,  ## todo: to be tested
         )
+        self.fm = fm
+
+    def predict(self, df_test, pred_file_name = None):
+        if self.generate_submissions:
+            df_test = _read_df_in_format(self.sample_data)
+        df_test = _load_data_for_BFM(df_test)
+
+        # Create RelationBlock.
+        test_blocks: List[RelationBlock] = []
+        for source, target in [(df_test, test_blocks)]:
+            unique_users, user_map = np.unique(source.user_id, return_inverse=True)
+            target.append(RelationBlock(user_map, self.augment_user_id(unique_users)))
+            unique_movies, movie_map = np.unique(source.movie_id, return_inverse=True)
+            target.append(RelationBlock(movie_map, self.augment_movie_id(unique_movies)))
 
         result = None
         if self.algorithm == "regression":
-            result = (fm.predict(None, X_rel = test_blocks)).clip(self.min_rate, self.max_rate)
+            result = (self.fm.predict(None, X_rel = test_blocks)).clip(self.min_rate, self.max_rate)
         else:
-            result = (fm.predict_proba(None, X_rel = test_blocks).dot(np.arange(5)) + 1).clip(self.min_rate, self.max_rate)
-
-        if self.save_full_pred:
-            np.savetxt(os.path.join('.', self.data_ensemble_folder, pred_file_name), result)
+            result = (self.fm.predict_proba(None, X_rel = test_blocks).dot(np.arange(5)) + 1).clip(self.min_rate, self.max_rate)
 
         if self.generate_submissions:
             df = pd.read_csv(self.sample_data)
@@ -209,3 +227,5 @@ class BFM_model:
                 submission_file += '_variational'
             submission_file += '.csv'
             df.to_csv(submission_file, index=False)
+        elif self.save_full_pred:
+            np.savetxt(os.path.join('.', self.data_ensemble_folder, pred_file_name), result)
