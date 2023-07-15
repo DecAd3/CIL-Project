@@ -153,18 +153,17 @@ def get_model(args, df_train = None, df_test = None):
         return Ensemble_Model(args)
 
 def train(args):
-
     df = _read_df_in_format(args.train_data)
-    if not args.generate_submissions:
-        df_train, df_test = train_test_split(df, test_size=args.test_size, random_state=args.random_seed)
-    else:
+    if args.generate_submissions or args.model_name == 'ensemble':
         df_train, df_test = df, None
+    else:
+        df_train, df_test = train_test_split(df, test_size=args.test_size, random_state=args.random_seed)
 
-    model = get_model(args, df_train, df_test)
-    model.train(df_train)
+    model = get_model(args, df_train, df_test)    
+
+    model.train(df_train)   # , (df_test, test_blocks)
     model.predict(df_test)
-
-
+    
 if __name__ == '__main__':
     args = process_config(sys.argv[1])
 

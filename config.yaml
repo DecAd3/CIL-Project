@@ -14,9 +14,9 @@ args:
     max_rate: 5
 
   experiment_args:
-    model_name: "vae"
-    model_instance_name: "bfm_op_novar_500_32"
-    generate_submissions: True
+    model_name: "ensemble"
+    model_instance_name: "svdpp"
+    generate_submissions: False
     submission_folder: ./output/submission
     verbose: True
 
@@ -42,9 +42,9 @@ args:
     n_epochs: 100
     reg_all: 0.05
   bfm_args:
-    algorithm: "oprobit" # regression, oprobit
-    variational: False
-    iteration: 500 # 512
+    algorithm: "regression" # regression, oprobit
+    variational: True
+    iteration: 500 # 500 # 512
     dimension: 32
     use_iu: True
     use_ii: True
@@ -69,8 +69,8 @@ args:
   ensemble_args:
     fold_number: 5
     shuffle: True
-    regressor: 'linear'
+    regressor: 'GradientBoost'
     data_ensemble: './output/data_ensemble/'
-    models: ["isvd"]
+    models: ["als", "isvd", "svdpp"] # "bfm_reg_var_500_32", "bfm_op_novar_500_32", "bfm_reg_novar_500_32"
   cv_args:
-    save_full_pred: True
+    save_full_pred: False # True

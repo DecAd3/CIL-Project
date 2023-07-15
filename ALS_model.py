@@ -15,6 +15,8 @@ class ALS_model:
         self.verbose = args.verbose
         self.model_name = 'als'
         self.args = args
+        self.save_full_pred = args.cv_args.save_full_pred
+        self.data_ensemble_folder = args.ens_args.data_ensemble_folder
         
     def train(self, df_train, initialization = None):
         np.random.seed(self.seed_value)
@@ -85,13 +87,16 @@ class ALS_model:
 
     #     return update_factors
     
-    def predict(self, df_test, save_string = "/als.csv"):
+    def predict(self, df_test, pred_file_name = None,save_string = "/als.csv"):
         generate_submissions = self.args.generate_submissions
-        if not generate_submissions:
-            predictions = self.reconstructed_matrix[df_test['row'].values - 1, df_test['col'].values - 1]
-            labels = df_test['Prediction'].values
-            print('RMSE: {:.4f}'.format(compute_rmse(predictions, labels)))
-        
-        else:
+        if generate_submissions:
             submission_file = self.args.submission_folder + save_string
             generate_submission(self.args.sample_data, submission_file, self.reconstructed_matrix)
+        else:
+            predictions = self.reconstructed_matrix[df_test['row'].values - 1, df_test['col'].values - 1]
+            if self.save_full_pred:
+                np.savetxt(os.path.join('.', self.data_ensemble_folder, pred_file_name), predictions)
+            else:
+                predictions = self.reconstructed_matrix[df_test['row'].values - 1, df_test['col'].values - 1]
+                labels = df_test['Prediction'].values
+                print('RMSE: {:.4f}'.format(compute_rmse(predictions, labels)))
