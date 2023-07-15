@@ -14,7 +14,7 @@ args:
     max_rate: 5
 
   experiment_args:
-    model_name: "bfm"
+    model_name: "vae"
     model_instance_name: "bfm_op_novar_500_32"
     generate_submissions: True
     submission_folder: ./output/submission
