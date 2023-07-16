@@ -43,7 +43,7 @@ args:
     reg_all: 0.05
   bfm_args:
     algorithm: "regression" # regression, oprobit
-    variational: True
+    variational: False
     iteration: 500 # 500 # 512
     dimension: 32
     use_iu: True

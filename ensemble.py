@@ -30,12 +30,12 @@ class Ensemble_Model:
             return ElasticNet()
         elif self.regressor == 'BayesianRidge':
             return BayesianRidge()
-        elif self.regressor == 'KernelRidge':
-            return KernelRidge()
+        # elif self.regressor == 'KernelRidge':
+        #     return KernelRidge()
         elif self.regressor == 'GradientBoost':
             return GradientBoostingRegressor()
-        elif self.regressor == 'SVR':
-            return SVR()
+        # elif self.regressor == 'SVR':
+        #     return SVR()
         raise ValueError("illegal regressor type provided")
     
     def obtain_predictions_from_all_models_in_one_ensemble(self, train_indices, test_indices, fold_index, mode = "train"):
@@ -64,7 +64,7 @@ class Ensemble_Model:
     def train(self, df_train):
         assert(self.fold_number >= 2)
         kf = KFold(n_splits=self.fold_number, shuffle=self.shuffle, random_state=self.seed_value)
-        rmse_total = 0.0
+        # rmse_total = 0.0
         print("Start training ensemble ...")
         for fold_index, (train_index, test_index) in enumerate(kf.split(df_train)):
             df_train_fold = df_train.iloc[train_index.tolist()]
@@ -72,14 +72,17 @@ class Ensemble_Model:
             pred_train_all, pred_test_all = self.obtain_predictions_from_all_models_in_one_ensemble(train_index.tolist(), test_index.tolist(), fold_index)
             gt_train = df_train_fold['Prediction'].values
             gt_test = df_test_fold['Prediction'].values
-            reg = self.get_regressor().fit(pred_train_all, gt_train)
-            testing = reg.predict(pred_test_all)
+            reg = self.get_regressor().fit(pred_test_all, gt_test)
+            # reg = self.get_regressor().fit(pred_train_all, gt_train)
             self.regressors.append(reg)
-            rmse_local = compute_rmse(testing, gt_test)
-            print('RMSE (fold - {}): {:.4f}'.format(fold_index, rmse_local))
-            rmse_total += rmse_local
-        rmse_avg = rmse_total / self.fold_number
-        print('Mean RMSE: {:.4f}'.format(rmse_avg))
+            testing_test = reg.predict(pred_test_all)
+            testing_train = reg.predict(pred_train_all) 
+            rmse_train = compute_rmse(testing_train, gt_train)
+            rmse_test = compute_rmse(testing_test, gt_test)
+            print('RMSE (fold - {}): train data - {:.4f}, test data - {:.4f}'.format(fold_index, rmse_train, rmse_test))
+        #     rmse_total += rmse_local
+        # rmse_avg = rmse_total / self.fold_number
+        # print('Mean RMSE: {:.4f}'.format(rmse_avg))
         predict_whole_train = self.predict(df_train, mode = "train")
         gt_whole_train = df_train['Prediction'].values
         print('RMSE (whole training dataset): {:.4f}'.format(compute_rmse(predict_whole_train, gt_whole_train)))
