@@ -3,6 +3,7 @@ from utils import _convert_df_to_matrix, _load_data_for_VAE, compute_rmse, gener
 from VAE import VAE
 import torch
 import torch.optim as optim
+import os
 
 class VAE_model:
     def __init__(self, args, df_train, df_test):
@@ -13,6 +14,9 @@ class VAE_model:
         self.model = VAE(args)
         self.optimizer = optim.Adam(self.model.parameters(), lr=args.vae_args.lr, weight_decay=args.vae_args.weight_decay)
         self.scheduler = optim.lr_scheduler.ExponentialLR(self.optimizer, gamma=args.vae_args.gamma)
+        self.save_full_pred = args.cv_args.save_full_pred
+        self.cv_model_name = args.cv_args.cv_model_name
+        self.data_ensemble_folder = args.ens_args.data_ensemble_folder
 
     def train(self, df_train=None):
         print("Start training VAE model ...")
@@ -26,7 +30,9 @@ class VAE_model:
 
                 reconstruction_loss = ((data_batch - reconstructed_batch) ** 2 * mask_batch).sum(axis=1).mean()
                 kl_loss = 0.5 * (torch.square(mu) + torch.exp(log_var) - 1 - log_var).sum(axis=1).mean()
-                loss = reconstruction_loss + self.args.vae_args.beta * kl_loss
+                # current_beta = self.args.vae_args.beta * epoch / self.num_iterations
+                current_beta = self.args.vae_args.beta
+                loss = reconstruction_loss + current_beta * kl_loss
 
                 self.optimizer.zero_grad()
                 loss.backward()
@@ -45,13 +51,16 @@ class VAE_model:
         self.reconstructed_matrix = self.model(data_train, indices_train)[0].detach().numpy()
         print("Training ends. ")
 
-    def predict(self, df_test=None):
-        if not self.args.generate_submissions:
-            predictions = self.reconstructed_matrix[self.df_test['row'].values - 1, self.df_test['col'].values - 1]
-            labels = self.df_test['Prediction'].values
-            print('RMSE: {:.4f}'.format(compute_rmse(predictions, labels)))
-
+    def predict(self, df_test, pred_file_name=None):
+        if self.save_full_pred:
+            predictions = self.reconstructed_matrix[df_test['row'].values - 1, df_test['col'].values - 1]
+            np.savetxt(os.path.join('.', self.data_ensemble_folder, pred_file_name), predictions)
         else:
-            submission_file = self.args.submission_folder + "/vae.csv"
-            generate_submission(self.args.sample_data, submission_file, self.reconstructed_matrix)
+            if not self.args.generate_submissions:
+                predictions = self.reconstructed_matrix[df_test['row'].values - 1, df_test['col'].values - 1]
+                labels = df_test['Prediction'].values
+                print('RMSE on testing set: {:.4f}'.format(compute_rmse(predictions, labels)))
+            else:
+                submission_file = self.args.submission_folder + "/vae.csv"
+                generate_submission(self.args.sample_data, submission_file, self.reconstructed_matrix)
 
