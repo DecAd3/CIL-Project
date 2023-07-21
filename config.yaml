@@ -15,7 +15,7 @@ args:
 
   experiment_args:
     model_name: "ensemble"
-    model_instance_name: "ensemble"
+    model_instance_name: "als"
     generate_submissions: True
     submission_folder: ./output/submission
     verbose: True
@@ -42,9 +42,9 @@ args:
     n_epochs: 100
     reg_all: 0.05
   bfm_args:
-    algorithm: "regression" # regression, oprobit
+    algorithm: "oprobit" # regression, oprobit
     variational: False
-    iteration: 500 # 500 # 512
+    iteration: 1000 # 500 # 512
     dimension: 32
     use_iu: True
     use_ii: True
@@ -57,7 +57,7 @@ args:
     save_file: ./data/ncf/submission_neural.csv
     all_predictions_file: ./data/ncf/predictions_alle.csv
   vae_args:
-    num_iterations: 2000
+    num_iterations: 1000
     batch_size: 1024
     hidden_dim: 256
     latent_dim: 32
@@ -69,9 +69,9 @@ args:
   ensemble_args:
     fold_number: 5
     shuffle: True
-    regressor: 'linear'
+    regressor: 'SGD'
     data_ensemble: './output/data_ensemble/'
-    models: ["als", "isvd"] # "bfm_reg_var_500_32", "bfm_op_novar_500_32", "bfm_reg_novar_500_32"
+    models: ["bfm_op_rk32_iter1000_cv5", "bfm_reg_novar_500_32"] # "bfm_reg_var_500_32", "bfm_op_novar_500_32", "bfm_reg_novar_500_32", "bfm_op_rk32_iter1000_cv5_fold_0_test"
   cv_args:
     save_full_pred: True # True
     weight_entries: True

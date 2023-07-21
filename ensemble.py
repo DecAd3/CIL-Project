@@ -43,7 +43,7 @@ class Ensemble_Model:
         pred_test_all = None
         for model_idx in range(len(self.model_list)):
             model_name = self.model_list[model_idx]
-            pred_fn = self.data_ensemble_folder + model_name + "_fold_" + str(fold_index) + "_" + mode + '.txt'
+            pred_fn = self.data_ensemble_folder + model_name + "_fold_" + str(fold_index) + "_" + mode + '.txt' # "_cv" + str(self.fold_number) + 
             pred_ins = np.loadtxt(pred_fn) # check type, shape 
             
             pred_train = None

@@ -222,7 +222,7 @@ class BFM_model:
         if self.generate_submissions:
             df = pd.read_csv(self.sample_data)
             df['Prediction'] = result
-            submission_file = self.submission_folder + '/bfm_' + self.algorithm + "_rank" + str(self.dimension)
+            submission_file = self.submission_folder + '/bfm_' + self.algorithm + "_rank" + str(self.dimension) + "_iters" + str(self.iteration)
             if self.variational:
                 submission_file += '_variational'
             submission_file += '.csv'

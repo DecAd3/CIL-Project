@@ -24,6 +24,8 @@ def cross_validation(args):
     wrong_inds = []
 
     for idx, (train_idx, test_idx) in enumerate(kf.split(df)):
+        # if (idx <=3):
+        #     continue
         df_train = df.iloc[train_idx.tolist()]
         df_test = df.iloc[test_idx.tolist()]
 
@@ -43,7 +45,7 @@ def cross_validation(args):
 
         print('Cross Validation - Fold {}: Number of training sumples: {}, number of test samples: {}.'.format(idx+1, len(df_train), len(df_test)))
 
-        model_name_base = model_instance_name + '_fold_' + str(idx)
+        model_name_base = model_instance_name + "_cv" + str(args.cv_args.fold_number) + '_fold_' + str(idx)
         model = get_model(args, df_train.copy(deep=True), df_test.copy(deep=True))
         model.train(df_train.copy(deep=True))   # , df_test.copy(deep=True)
         args.cv_args.cv_model_name = model_name_base + "_train.txt"
