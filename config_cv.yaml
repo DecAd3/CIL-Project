@@ -14,8 +14,8 @@ args:
     max_rate: 5
 
   experiment_args:
-    model_name: "vae"    # for cross validation, this name the model to be run for cross validation
-    model_instance_name: "vae"  # for cross validation, this is for the txt name to be saved 
+    model_name: "bfm"    # for cross validation, this name the model to be run for cross validation
+    model_instance_name: "bfm_reg_rk16_iter1000"  # for cross validation, this is for the txt name to be saved 
     generate_submissions: False
     submission_folder: ./output/submission
     verbose: True
@@ -44,8 +44,8 @@ args:
   bfm_args:
     algorithm: "regression" # regression, oprobit
     variational: False
-    iteration: 500 # 500 # 512
-    dimension: 32
+    iteration: 1000 # 500 # 512
+    dimension: 16
     use_iu: True
     use_ii: True
   ncf_args:
