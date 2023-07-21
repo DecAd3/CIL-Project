@@ -14,8 +14,8 @@ args:
     max_rate: 5
 
   experiment_args:
-    model_name: "vae"    # for cross validation, this name the model to be run for cross validation
-    model_instance_name: "vae"  # for cross validation, this is for the txt name to be saved 
+    model_name: "isvd"    # for cross validation, this name the model to be run for cross validation
+    model_instance_name: "isvd"  # for cross validation, this is for the txt name to be saved
     generate_submissions: False
     submission_folder: ./output/submission
     verbose: True
@@ -74,3 +74,4 @@ args:
     models: ["bfm_op_novar_500_32", "bfm_reg_novar_500_32"] # "bfm_reg_var_500_32", "bfm_op_novar_500_32", "bfm_reg_novar_500_32"
   cv_args:
     save_full_pred: True # True
+    weight_entries: True

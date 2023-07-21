@@ -15,8 +15,8 @@ args:
 
   experiment_args:
     model_name: "ensemble"
-    model_instance_name: "als"
-    generate_submissions: False
+    model_instance_name: "ensemble"
+    generate_submissions: True
     submission_folder: ./output/submission
     verbose: True
 
@@ -74,3 +74,4 @@ args:
     models: ["als", "isvd"] # "bfm_reg_var_500_32", "bfm_op_novar_500_32", "bfm_reg_novar_500_32"
   cv_args:
     save_full_pred: True # True
+    weight_entries: True

@@ -129,6 +129,7 @@ def process_config(path):
     args.cv_args.cv_folder = args.ens_args.data_ensemble_folder
     args.cv_args.save_full_pred = cv_args['save_full_pred']
     args.cv_args.cv_model_name = args.model_instance_name
+    args.cv_args.weight_entries = cv_args['weight_entries']
     return args
 
 
