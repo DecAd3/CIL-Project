@@ -4,13 +4,15 @@ from torch import nn
 class VAE(nn.Module):
     def __init__(self, args):
         super().__init__()
+        self.num_users = args.num_users
+        self.num_items = args.num_items
         self.hidden_dim = args.vae_args.hidden_dim
         self.latent_dim = args.vae_args.latent_dim
         self.dropout = args.vae_args.dropout
-        self.bias = torch.nn.Parameter(torch.ones((10000, 1)) * 3)
+        self.bias = torch.nn.Parameter(torch.ones((self.num_users, 1)) * 3)
         self.encoder_net = nn.Sequential(
             nn.Dropout(self.dropout),
-            nn.Linear(1000, self.hidden_dim),
+            nn.Linear(self.num_items, self.hidden_dim),
             nn.Tanh(),
             nn.Dropout(self.dropout),
             nn.Linear(self.hidden_dim, self.latent_dim*2),
@@ -19,7 +21,7 @@ class VAE(nn.Module):
             nn.Linear(self.latent_dim, self.hidden_dim),
             nn.Tanh(),
             nn.Dropout(self.dropout),
-            nn.Linear(self.hidden_dim, 1000)
+            nn.Linear(self.hidden_dim, self.num_items)
         )
 
     def encoder(self, data):
@@ -42,6 +44,6 @@ class VAE(nn.Module):
         normalized_data = torch.nn.functional.normalize(data)
         mu, log_var = self.encoder(normalized_data)
         z = self.reparameterization(mu, log_var)
-        reconstructed_data = self.decoder(z) + self.bias[indices].tile((1, 1000))
+        reconstructed_data = self.decoder(z) + self.bias[indices].tile((1, self.num_items))
         return reconstructed_data, mu, log_var, z
 

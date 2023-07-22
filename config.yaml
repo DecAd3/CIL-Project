@@ -5,9 +5,6 @@ args:
     num_users: 10000
     num_items: 1000
     test_size: 0.1
-#    test_save_dir: ./output/logs/output
-#    model_load_path: ./output/models
-#    model_save_path: ./output/models
     random_seed: 42
     device: "cpu"
     min_rate: 1
@@ -18,6 +15,7 @@ args:
     model_instance_name: "als"
     generate_submissions: True
     submission_folder: ./output/submission
+    save_full_pred: False # True: for cross validation
     verbose: True
 
   svd_args:
@@ -32,10 +30,10 @@ args:
   isvd_args:
     imputation: "mean"
     num_iterations: 15
-    type: "svp" # svp: Singular Value Projection, nnr: Nuclear Norm Relaxation
+    type: "nnr" # svp: Singular Value Projection, nnr: Nuclear Norm Relaxation
     eta: 0.3
     rank: 9
-    shrinkage: 38
+    shrinkage: 40
   svdpp_args:
     n_factors: 3
     lr_all: 0.003
@@ -57,7 +55,7 @@ args:
     save_file: ./data/ncf/submission_neural.csv
     all_predictions_file: ./data/ncf/predictions_alle.csv
   vae_args:
-    num_iterations: 2000
+    num_iterations: 1000
     batch_size: 1024
     hidden_dim: 256
     latent_dim: 32
@@ -73,4 +71,4 @@ args:
     data_ensemble: './output/data_ensemble/'
     models: ["bfm_op_rk32_iter1000", "bfm_reg_rk16_iter1000"] # "bfm_reg_var_500_32", "bfm_op_novar_500_32", "bfm_reg_novar_500_32"
   cv_args:
-    save_full_pred: False # True
+    weight_entries: False
