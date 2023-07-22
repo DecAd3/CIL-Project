@@ -14,8 +14,8 @@ args:
     max_rate: 5
 
   experiment_args:
-    model_name: "vae"    # for cross validation, this name the model to be run for cross validation
-    model_instance_name: "vae"  # for cross validation, this is for the txt name to be saved 
+    model_name: "bfm"    # for cross validation, this name the model to be run for cross validation
+    model_instance_name: "bfm_op_rk32_iter1000"  # for cross validation, this is for the txt name to be saved 
     generate_submissions: False
     submission_folder: ./output/submission
     verbose: True
@@ -42,9 +42,9 @@ args:
     n_epochs: 100
     reg_all: 0.05
   bfm_args:
-    algorithm: "regression" # regression, oprobit
+    algorithm: "oprobit" # regression, oprobit
     variational: False
-    iteration: 500 # 500 # 512
+    iteration: 1000 # 500 # 512
     dimension: 32
     use_iu: True
     use_ii: True
@@ -67,7 +67,7 @@ args:
     gamma: 0.997
     beta: 0.2
   ensemble_args:
-    fold_number: 5
+    fold_number: 3
     shuffle: True
     regressor: 'ElasticNet'
     data_ensemble: './output/data_ensemble/'

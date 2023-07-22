@@ -14,7 +14,7 @@ args:
     max_rate: 5
 
   experiment_args:
-    model_name: "bfm"
+    model_name: "ensemble"
     model_instance_name: "als"
     generate_submissions: True
     submission_folder: ./output/submission
@@ -42,10 +42,10 @@ args:
     n_epochs: 100
     reg_all: 0.05
   bfm_args:
-    algorithm: "oprobit" # regression, oprobit
+    algorithm: "regression" # regression, oprobit
     variational: False
-    iteration: 1200 # 500 # 512
-    dimension: 32
+    iteration: 1000 # 500 # 512
+    dimension: 16
     use_iu: True
     use_ii: True
   ncf_args:
@@ -67,10 +67,10 @@ args:
     gamma: 0.997
     beta: 0.2
   ensemble_args:
-    fold_number: 5
+    fold_number: 3
     shuffle: True
-    regressor: 'SGD'
+    regressor: 'GradientBoost'
     data_ensemble: './output/data_ensemble/'
-    models: ["bfm_op_novar_500_32", "bfm_reg_novar_500_32", 'vae'] # "bfm_reg_var_500_32", "bfm_op_novar_500_32", "bfm_reg_novar_500_32"
+    models: ["bfm_op_rk32_iter1000", "bfm_reg_rk16_iter1000"] # "bfm_reg_var_500_32", "bfm_op_novar_500_32", "bfm_reg_novar_500_32"
   cv_args:
     save_full_pred: False # True
