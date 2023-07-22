@@ -33,7 +33,7 @@ args:
     type: "svp" # svp: Singular Value Projection, nnr: Nuclear Norm Relaxation
     eta: 0.3
     rank: 9
-    shrinkage: 38
+    shrinkage: 40
   svdpp_args:
     n_factors: 3
     lr_all: 0.003

@@ -123,9 +123,9 @@ def process_config(path):
     # cross validation arguments
     cv_args = data['args']['cv_args']
     args.cv_args = argparse.Namespace()
+    args.cv_args.save_full_pred = args.save_full_pred
     args.cv_args.fold_number = args.ens_args.fold_number
     args.cv_args.cv_folder = args.ens_args.data_ensemble_folder
-    args.cv_args.save_full_pred = args.save_full_pred
     args.cv_args.cv_model_name = args.model_instance_name
     args.cv_args.weight_entries = cv_args['weight_entries']
     return args
