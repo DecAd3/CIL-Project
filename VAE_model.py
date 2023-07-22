@@ -10,17 +10,18 @@ class VAE_model:
         self.args = args
         self.df_train = df_train
         self.df_test = df_test
+        self.num_users = args.num_users
+        self.num_items = args.num_items
         self.num_iterations = args.vae_args.num_iterations
         self.model = VAE(args)
         self.optimizer = optim.Adam(self.model.parameters(), lr=args.vae_args.lr, weight_decay=args.vae_args.weight_decay)
         self.scheduler = optim.lr_scheduler.ExponentialLR(self.optimizer, gamma=args.vae_args.gamma)
         self.save_full_pred = args.cv_args.save_full_pred
-        self.cv_model_name = args.cv_args.cv_model_name
         self.data_ensemble_folder = args.ens_args.data_ensemble_folder
 
     def train(self, df_train=None):
         print("Start training VAE model ...")
-        data_train, _ = _convert_df_to_matrix(self.df_train, 10000, 1000)
+        data_train, _ = _convert_df_to_matrix(self.df_train, self.num_users, self.num_items)
         dataloader_train, data_train, mask_train, indices_train = _load_data_for_VAE(data_train, self.args.vae_args.batch_size)
 
         for epoch in range(self.num_iterations):
@@ -52,15 +53,14 @@ class VAE_model:
         print("Training ends. ")
 
     def predict(self, df_test, pred_file_name=None):
-        if self.save_full_pred:
-            predictions = self.reconstructed_matrix[df_test['row'].values - 1, df_test['col'].values - 1]
-            np.savetxt(os.path.join('.', self.data_ensemble_folder, pred_file_name), predictions)
+        if self.args.generate_submissions:
+            submission_file = self.args.submission_folder + "/vae.csv"
+            generate_submission(self.args.sample_data, submission_file, self.reconstructed_matrix)
         else:
-            if not self.args.generate_submissions:
-                predictions = self.reconstructed_matrix[df_test['row'].values - 1, df_test['col'].values - 1]
+            predictions = self.reconstructed_matrix[df_test['row'].values - 1, df_test['col'].values - 1]
+            if self.save_full_pred:
+                np.savetxt(os.path.join('.', self.data_ensemble_folder, pred_file_name), predictions)
+            else:
                 labels = df_test['Prediction'].values
                 print('RMSE on testing set: {:.4f}'.format(compute_rmse(predictions, labels)))
-            else:
-                submission_file = self.args.submission_folder + "/vae.csv"
-                generate_submission(self.args.sample_data, submission_file, self.reconstructed_matrix)
 

@@ -5,19 +5,17 @@ args:
     num_users: 10000
     num_items: 1000
     test_size: 0.1
-#    test_save_dir: ./output/logs/output
-#    model_load_path: ./output/models
-#    model_save_path: ./output/models
     random_seed: 42
     device: "cpu"
     min_rate: 1
     max_rate: 5
 
   experiment_args:
-    model_name: "bfm"    # for cross validation, this name the model to be run for cross validation
-    model_instance_name: "bfm_reg_rk16_iter1000"  # for cross validation, this is for the txt name to be saved
-    generate_submissions: False
+    model_name: "svd"  # for cross validation, this name the model to be run for cross validation
+    model_instance_name: "svd"  # for cross validation, this is for the txt name to be saved
+    generate_submissions: True
     submission_folder: ./output/submission
+    save_full_pred: True # True: for cross validation
     verbose: True
 
   svd_args:
@@ -73,5 +71,4 @@ args:
     data_ensemble: './output/data_ensemble/'
     models: ["bfm_op_novar_500_32", "bfm_reg_novar_500_32"] # "bfm_reg_var_500_32", "bfm_op_novar_500_32", "bfm_reg_novar_500_32"
   cv_args:
-    save_full_pred: True # True
-    weight_entries: True
+    weight_entries: False

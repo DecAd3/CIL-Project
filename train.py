@@ -30,9 +30,6 @@ def process_config(path):
     args.num_users = training_args['num_users']
     args.num_items = training_args['num_items']
     args.test_size = training_args['test_size']
-    # args.test_save_dir = training_args['test_save_dir']
-    # args.model_load_path = training_args['model_load_path']
-    # args.model_save_path = training_args['model_save_path']
     args.random_seed = training_args['random_seed']
     args.device = training_args['device']
     args.min_rate = training_args['min_rate']
@@ -44,6 +41,7 @@ def process_config(path):
     args.model_instance_name = experiment_args['model_instance_name']
     args.generate_submissions = experiment_args['generate_submissions']
     args.submission_folder = experiment_args['submission_folder']
+    args.save_full_pred = experiment_args['save_full_pred']
     args.verbose = experiment_args['verbose']
 
     # SVD arguments
@@ -127,7 +125,7 @@ def process_config(path):
     args.cv_args = argparse.Namespace()
     args.cv_args.fold_number = args.ens_args.fold_number
     args.cv_args.cv_folder = args.ens_args.data_ensemble_folder
-    args.cv_args.save_full_pred = cv_args['save_full_pred']
+    args.cv_args.save_full_pred = args.save_full_pred
     args.cv_args.cv_model_name = args.model_instance_name
     args.cv_args.weight_entries = cv_args['weight_entries']
     return args

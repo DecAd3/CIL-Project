@@ -9,11 +9,12 @@ import random
 def cross_validation(args):
     np.random.seed(args.random_seed)
     df = _read_df_in_format(args.train_data)
-    df_submission_test = None
-    if args.cv_args.save_full_pred:
-        df_submission_test = _read_df_in_format(args.sample_data)
+    # df_submission_test = None
+    # if args.cv_args.save_full_pred:
+    #     df_submission_test = _read_df_in_format(args.sample_data)
+    df_submission_test = _read_df_in_format(args.sample_data)
     cv_folder = args.cv_args.cv_folder
-    model_name = args.model_name
+    # model_name = args.model_name
     model_instance_name = args.model_instance_name
     weight_entries = args.cv_args.weight_entries
 
@@ -59,7 +60,7 @@ def cross_validation(args):
             wrong_inds = np.nonzero(np.abs(all_predict - gt_all) > 1.0)
 
         args.cv_args.cv_model_name = model_name_base + "_test.txt"
-        model.predict(df_submission_test.copy(deep=True), pred_file_name = args.cv_args.cv_model_name)
+        model.predict(df_submission_test.copy(deep=True), pred_file_name=args.cv_args.cv_model_name)
 
 if __name__ == '__main__':
     args = process_config(sys.argv[1])

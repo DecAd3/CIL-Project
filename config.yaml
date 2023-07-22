@@ -5,19 +5,17 @@ args:
     num_users: 10000
     num_items: 1000
     test_size: 0.1
-#    test_save_dir: ./output/logs/output
-#    model_load_path: ./output/models
-#    model_save_path: ./output/models
     random_seed: 42
     device: "cpu"
     min_rate: 1
     max_rate: 5
 
   experiment_args:
-    model_name: "ensemble"
-    model_instance_name: "als"
-    generate_submissions: True
+    model_name: "vae"
+    model_instance_name: "vae"
+    generate_submissions: False
     submission_folder: ./output/submission
+    save_full_pred: False # True: for cross validation
     verbose: True
 
   svd_args:
@@ -32,7 +30,7 @@ args:
   isvd_args:
     imputation: "mean"
     num_iterations: 15
-    type: "svp" # svp: Singular Value Projection, nnr: Nuclear Norm Relaxation
+    type: "nnr" # svp: Singular Value Projection, nnr: Nuclear Norm Relaxation
     eta: 0.3
     rank: 9
     shrinkage: 38
@@ -73,5 +71,4 @@ args:
     data_ensemble: './output/data_ensemble/'
     models: ["bfm_op_rk32_iter1000_cv5", "bfm_reg_novar_500_32"] # "bfm_reg_var_500_32", "bfm_op_novar_500_32", "bfm_reg_novar_500_32", "bfm_op_rk32_iter1000_cv5_fold_0_test"
   cv_args:
-    save_full_pred: True # True
-    weight_entries: True
+    weight_entries: False
