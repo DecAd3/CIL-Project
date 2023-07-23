@@ -14,6 +14,7 @@ from BFM_model import BFM_model
 from neural import NCF_model
 from VAE_model import VAE_model
 from ensemble import Ensemble_Model
+import time
 
 
 def process_config(path):
@@ -160,8 +161,13 @@ def train(args):
 
     model = get_model(args, df_train, df_test)    
 
+    start_time = time.time()
     model.train(df_train)   # , (df_test, test_blocks)
+    end_time = time.time()
+    # Calculate the execution time
+    execution_time = end_time - start_time
     model.predict(df_test)
+    print("training time: " + str(execution_time) + " seconds")
     
 if __name__ == '__main__':
     args = process_config(sys.argv[1])
