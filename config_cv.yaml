@@ -65,7 +65,7 @@ args:
     gamma: 0.997
     beta: 0.2
   ensemble_args:
-    fold_number: 3
+    fold_number: 7
     shuffle: True
     regressor: 'ElasticNet'
     data_ensemble: './output/data_ensemble/'
