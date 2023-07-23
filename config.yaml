@@ -5,6 +5,9 @@ args:
     num_users: 10000
     num_items: 1000
     test_size: 0.1
+#    test_save_dir: ./output/logs/output
+#    model_load_path: ./output/models
+#    model_save_path: ./output/models
     random_seed: 42
     device: "cpu"
     min_rate: 1
@@ -15,7 +18,6 @@ args:
     model_instance_name: "als"
     generate_submissions: True
     submission_folder: ./output/submission
-    save_full_pred: False # True: for cross validation
     verbose: True
 
   svd_args:
@@ -30,20 +32,20 @@ args:
   isvd_args:
     imputation: "mean"
     num_iterations: 15
-    type: "nnr" # svp: Singular Value Projection, nnr: Nuclear Norm Relaxation
+    type: "svp" # svp: Singular Value Projection, nnr: Nuclear Norm Relaxation
     eta: 0.3
     rank: 9
-    shrinkage: 40
+    shrinkage: 38
   svdpp_args:
     n_factors: 3
     lr_all: 0.003
     n_epochs: 100
     reg_all: 0.05
   bfm_args:
-    algorithm: "regression" # regression, oprobit
+    algorithm: "oprobit" # regression, oprobit
     variational: False
     iteration: 1000 # 500 # 512
-    dimension: 16
+    dimension: 32
     use_iu: True
     use_ii: True
   ncf_args:
@@ -61,14 +63,14 @@ args:
     latent_dim: 32
     dropout: 0.5
     lr: 0.025
-    weight_decay: 0
+    weight_decay: 0 
     gamma: 0.997
     beta: 0.2
   ensemble_args:
-    fold_number: 3
+    fold_number: 7
     shuffle: True
     regressor: 'GradientBoost'
     data_ensemble: './output/data_ensemble/'
-    models: ["bfm_op_rk32_iter1000", "bfm_reg_rk16_iter1000"] # "bfm_reg_var_500_32", "bfm_op_novar_500_32", "bfm_reg_novar_500_32"
+    models: ["bfm_reg_rk16_iter1000_cv7", "bfm_op_rk32_iter1000_cv7"] # "bfm_reg_var_500_32", "bfm_op_novar_500_32", "bfm_reg_novar_500_32", "bfm_op_rk32_iter1000_cv5_fold_0_test" "bfm_reg_rk16_iter1000_cv5"
   cv_args:
-    weight_entries: False
+    save_full_pred: False # True

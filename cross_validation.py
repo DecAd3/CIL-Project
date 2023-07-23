@@ -25,8 +25,8 @@ def cross_validation(args):
     wrong_inds = []
 
     for idx, (train_idx, test_idx) in enumerate(kf.split(df)):
-        # if (idx <=3):
-        #     continue
+        if (idx <=3):
+            continue
         df_train = df.iloc[train_idx.tolist()]
         df_test = df.iloc[test_idx.tolist()]
 
