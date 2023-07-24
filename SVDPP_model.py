@@ -52,17 +52,11 @@ class SVDPP_model:
             df = pd.read_csv(self.sample_data)
             df['Prediction'] = predictions_array
             df.to_csv(self.out_path, index=False)
-        elif self.save_full_pred:
-            np.savetxt(os.path.join('.', self.data_ensemble_folder, pred_file_name), predictions_array)
-        # with open(self.out_path, 'w+') as f:
-        #     f.write('Id,Prediction\n')
-        #     for i in range(df_test.shape[0]):
-        #         row, col = int(df_test['row'].values[i]), int(df_test['col'].values[i])
-        #         uid = row-1
-        #         iid = col-1
-        #         pred = self.algo.predict(uid, iid, verbose=False)
-        #         predictions.append(pred.est)
-        #         f.write('r{0}_c{1},{2}\n'.format(row, col, pred.est))
         else:
-            labels = df_test['Prediction'].values
-            print('RMSE: {:.4f}'.format(compute_rmse(predictions, labels)))
+            if self.save_full_pred:
+                np.savetxt(os.path.join('.', self.data_ensemble_folder, pred_file_name), predictions_array)
+            else:
+                labels = df_test['Prediction'].values
+                print('RMSE: {:.4f}'.format(compute_rmse(predictions, labels)))
+            return predictions_array
+        return None
