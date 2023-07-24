@@ -40,12 +40,14 @@ def cross_validation(args):
                 # random_inds = random.sample([i for i in range(len(df)) if i not in wrong_inds], (len(df)-len(wrong_inds)) // 2)
                 weights = np.ones(len(df)).astype(float)
                 weights[wrong_inds[0]] = 2.0
-                print(wrong_inds[0][:100])
-                print(weights[:100])
+                # print(wrong_inds[0][:100])
+                # print(weights[:100])
                 weights /= np.sum(weights)
                 random_inds = np.random.choice(len(df), size=len(df) * (args.cv_args.fold_number - 1) // args.cv_args.fold_number, p=weights, replace=False)
 
                 df_train = df.iloc[random_inds]
+                train_idx = random_inds
+                test_idx = np.setdiff1d(np.arange(len(df)), random_inds)
 
         print('Cross Validation - Fold {}: Number of training sumples: {}, number of test samples: {}.'.format(idx+1, len(df_train), len(df_test)))
 
@@ -71,7 +73,7 @@ def cross_validation(args):
             predictions = model.predict(df_test)
             labels = df_test['Prediction'].values
             rmse_all += compute_rmse(predictions, labels)
-            
+
     rmse_all /= args.cv_args.fold_number
     print('Average RMSE of {} fold: {:.4f}'.format(args.cv_args.fold_number, rmse_all))
     return rmse_all
