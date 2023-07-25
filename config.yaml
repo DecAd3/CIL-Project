@@ -11,9 +11,9 @@ args:
     max_rate: 5
 
   experiment_args:
-    model_name: "ensemble"
+    model_name: "als"
     model_instance_name: "bfm_reg_rk32_iter1000"
-    generate_submissions: False
+    generate_submissions: True
     submission_folder: ./output/submission
     save_full_pred: False # True: for cross validation
     verbose: True
@@ -64,7 +64,7 @@ args:
     gamma: 0.997
     beta: 0.2
   ensemble_args:
-    fold_number: 10
+    fold_number: 5
     shuffle: True
     regressor: 'GradientBoost'
     data_ensemble: './output/data_ensemble/'

@@ -17,9 +17,19 @@ def grid_search(args):
     # 'gamma': [0.001, 0.01, 0.1, 1],
     # 'kernel': ['linear', 'rbf']
     # }
+
+    # for svd
     param_grid = {
         'rank': [7, 8, 9, 10]
     }
+
+    # for als
+    param_grid = {
+        'svd_rank': [3, 4, 5],
+        'num_iterations': [5, 10, 15],
+        'reg_param': [0.3]
+    }
+    # for xxx
 
     # Create a list of all parameter combinations
     keys, values = zip(*param_grid.items())
