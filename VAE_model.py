@@ -63,4 +63,6 @@ class VAE_model:
             else:
                 labels = df_test['Prediction'].values
                 print('RMSE on testing set: {:.4f}'.format(compute_rmse(predictions, labels)))
+            return predictions
+        return  None
 

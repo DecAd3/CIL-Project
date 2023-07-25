@@ -15,7 +15,7 @@ from myfm.utils.callbacks.libfm import (
 )
 from myfm.utils.encoders import CategoryValueToSparseEncoder
 
-from utils import _load_data_for_BFM, _read_df_in_format
+from utils import _load_data_for_BFM, _read_df_in_format, compute_rmse
 
 class BFM_model:
     def __init__(self, args):
@@ -227,5 +227,12 @@ class BFM_model:
                 submission_file += '_variational'
             submission_file += '.csv'
             df.to_csv(submission_file, index=False)
-        elif self.save_full_pred:
-            np.savetxt(os.path.join('.', self.data_ensemble_folder, pred_file_name), result)
+        else:
+            if self.save_full_pred:
+                np.savetxt(os.path.join('.', self.data_ensemble_folder, pred_file_name), result)
+            else:
+                labels = df_test['Prediction'].values
+                print('RMSE on testing set: {:.4f}'.format(compute_rmse(result, labels)))
+            return result
+        return None
+        

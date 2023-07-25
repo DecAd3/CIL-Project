@@ -109,10 +109,12 @@ class NCF_model:
             predictions = self.reconstructed[df_test['row'].values - 1, df_test['col'].values - 1]
             labels = df_test['Prediction'].values
             print('RMSE: {:.4f}'.format(compute_rmse(predictions, labels)))
+            return predictions
         else:
             print("Genarating submissions...")
             generate_submission(self.sample_submission, self.save_file, self.reconstructed)
 
+        return None
 
 
 # if __name__ == '__main__':
