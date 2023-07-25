@@ -66,6 +66,7 @@ class Ensemble_Model:
         kf = KFold(n_splits=self.fold_number, shuffle=self.shuffle, random_state=self.seed_value)
         # rmse_total = 0.0
         print("Start training ensemble ...")
+        rmse_test_all = 0
         for fold_index, (train_index, test_index) in enumerate(kf.split(df_train)):
             df_train_fold = df_train.iloc[train_index.tolist()]
             df_test_fold = df_train.iloc[test_index.tolist()]
@@ -79,6 +80,7 @@ class Ensemble_Model:
             testing_train = reg.predict(pred_train_all) 
             rmse_train = compute_rmse(testing_train, gt_train)
             rmse_test = compute_rmse(testing_test, gt_test)
+            rmse_test_all += rmse_test
             print('RMSE (fold - {}): train data - {:.4f}, test data - {:.4f}'.format(fold_index, rmse_train, rmse_test))
         #     rmse_total += rmse_local
         # rmse_avg = rmse_total / self.fold_number
@@ -86,6 +88,8 @@ class Ensemble_Model:
         predict_whole_train = self.predict(df_train, mode = "train")
         gt_whole_train = df_train['Prediction'].values
         print('RMSE (whole training dataset): {:.4f}'.format(compute_rmse(predict_whole_train, gt_whole_train)))
+        rmse_test_all /= (self.fold_number * 1.0)
+        print('RMSE (testing average): {:.4f}'.format(rmse_test_all))
 
     def predict(self, df_test = None, mode = "test"):
         # if self.generate_submissions:

@@ -7,7 +7,6 @@ class ALS_model:
         self.num_users = args.num_users
         self.num_items = args.num_items
         self.imputation = args.als_args.imputation
-        self.svd_rank = args.als_args.svd_rank
         self.latent_dim = args.als_args.latent_dim
         self.num_iterations = args.als_args.num_iterations
         self.reg_param = args.als_args.reg_param
