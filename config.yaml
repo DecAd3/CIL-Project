@@ -12,7 +12,7 @@ args:
 
   experiment_args:
     model_name: "ensemble"
-    model_instance_name: "als"
+    model_instance_name: "bfm_reg_rk32_iter1000"
     generate_submissions: True
     submission_folder: ./output/submission
     save_full_pred: False # True: for cross validation
@@ -40,7 +40,7 @@ args:
     n_epochs: 100
     reg_all: 0.05
   bfm_args:
-    algorithm: "regression" # regression, oprobit
+    algorithm: "oprobit" # regression, oprobit
     variational: False
     iteration: 1000 # 500 # 512
     dimension: 16
