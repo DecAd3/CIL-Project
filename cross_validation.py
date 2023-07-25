@@ -56,7 +56,7 @@ def cross_validation(args):
         model.train(df_train.copy(deep=True))   # , df_test.copy(deep=True)
         if save_full_pred:
             args.cv_args.cv_model_name = model_name_base + "_train.txt"
-            predictions = model.predict(df.copy(deep=True), pred_file_name = args.cv_args.cv_model_name)
+            predictions = model.predict(df.copy(deep=True), pred_file_name=args.cv_args.cv_model_name)
             labels = df_test['Prediction'].values
             rmse_all += compute_rmse(predictions[test_idx], labels)
 
