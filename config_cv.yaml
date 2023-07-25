@@ -11,11 +11,11 @@ args:
     max_rate: 5
 
   experiment_args:
-    model_name: "bfm"    # for cross validation, this name the model to be run for cross validation
+    model_name: "als"    # for cross validation, this name the model to be run for cross validation
     model_instance_name: "bfm_reg_rk16_iter1000"  # for cross validation, this is for the txt name to be saved 
     generate_submissions: False
     submission_folder: ./output/submission
-    save_full_pred: True # True: for cross validation
+    save_full_pred: False
     verbose: True
 
   svd_args:
@@ -23,9 +23,8 @@ args:
     rank: 9
   als_args:
     imputation: "zero"
-    num_iterations: 20
-    svd_rank: 9
-    reg_param: 0.15
+    num_iterations: 5
+    reg_param: 0.3
     latent_dim: 3
   isvd_args:
     imputation: "mean"
@@ -65,10 +64,12 @@ args:
     gamma: 0.997
     beta: 0.2
   ensemble_args:
-    fold_number: 10
+    fold_number: 5
     shuffle: True
-    regressor: 'ElasticNet'
+    regressor: 'GradientBoost'
     data_ensemble: './output/data_ensemble/'
     models: ["bfm_op_novar_500_32", "bfm_reg_novar_500_32"] # "bfm_reg_var_500_32", "bfm_op_novar_500_32", "bfm_reg_novar_500_32"
   cv_args:
     weight_entries: False
+    full_pred_provided: False
+    full_pred_fn: "bfm_op_rk32_iter1000_cv5"
