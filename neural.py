@@ -85,7 +85,7 @@ class NCF_model:
 
         print("Took {} seconds for training.".format(train_time))
 
-    def predict(self, df_test):
+    def predict(self, df_test, pred_file_name=None):
         print("Predicting...")
         with Timer() as test_time:
             predictions = [[row, col, self.model.predict(row, col)]
