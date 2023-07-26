@@ -50,6 +50,7 @@ def cross_validation(args):
                 df_train = df.iloc[random_inds]
                 train_idx = random_inds
                 test_idx = np.setdiff1d(np.arange(len(df)), random_inds)
+                df_test = df.iloc[test_idx.tolist()]
 
         print('Cross Validation - Fold {}: Number of training sumples: {}, number of test samples: {}.'
               .format(idx + 1, len(df_train), len(df_test)))
