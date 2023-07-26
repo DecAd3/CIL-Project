@@ -54,7 +54,7 @@ def process_config(path):
     # ALS arguments
     als_args = data['args']['als_args']
     args.als_args = argparse.Namespace()
-    args.als_args.svd_rank = als_args['svd_rank']
+    # args.als_args.svd_rank = als_args['svd_rank']
     args.als_args.num_iterations = als_args['num_iterations']
     args.als_args.reg_param = als_args['reg_param']
     args.als_args.latent_dim = als_args['latent_dim']
@@ -129,6 +129,8 @@ def process_config(path):
     args.cv_args.cv_folder = args.ens_args.data_ensemble_folder
     args.cv_args.cv_model_name = args.model_instance_name
     args.cv_args.weight_entries = cv_args['weight_entries']
+    args.cv_args.full_pred_provided = cv_args['full_pred_provided']
+    args.cv_args.full_pred_fn = cv_args['full_pred_fn']
     return args
 
 

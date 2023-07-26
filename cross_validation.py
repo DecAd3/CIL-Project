@@ -51,28 +51,35 @@ def cross_validation(args):
 
         print('Cross Validation - Fold {}: Number of training sumples: {}, number of test samples: {}.'.format(idx+1, len(df_train), len(df_test)))
 
-        model_name_base = model_instance_name + "_cv" + str(args.cv_args.fold_number) + '_fold_' + str(idx)
-        model = get_model(args, df_train.copy(deep=True), df_test.copy(deep=True))
-        model.train(df_train.copy(deep=True))   # , df_test.copy(deep=True)
-        if save_full_pred:
-            args.cv_args.cv_model_name = model_name_base + "_train.txt"
-            predictions = model.predict(df.copy(deep=True), pred_file_name = args.cv_args.cv_model_name)
-            labels = df_test['Prediction'].values
-            rmse_all += compute_rmse(predictions[test_idx], labels)
-
-            if weight_entries:
-                # get indices that are not predicted correctly
-                print(os.path.join(args.ens_args.data_ensemble_folder, args.cv_args.cv_model_name))
-                all_predict = np.loadtxt(os.path.join(args.ens_args.data_ensemble_folder, args.cv_args.cv_model_name))
-                gt_all = np.array(df['Prediction'].values)
-                wrong_inds = np.nonzero(np.abs(all_predict - gt_all) > 1.0)
-
-            args.cv_args.cv_model_name = model_name_base + "_test.txt"
-            model.predict(df_submission_test.copy(deep=True), pred_file_name=args.cv_args.cv_model_name)
-        else:
-            predictions = model.predict(df_test)
+        if args.cv_args.full_pred_provided:
+            filepath = args.cv_args.cv_folder + "/" + args.cv_args.full_pred_fn + '_fold_' + str(idx) + "_train.txt"
+            predictions = np.loadtxt(filepath)[test_idx.tolist()]
             labels = df_test['Prediction'].values
             rmse_all += compute_rmse(predictions, labels)
+        else:
+            model_name_base = model_instance_name + "_cv" + str(args.cv_args.fold_number) + '_fold_' + str(idx)
+            model = get_model(args, df_train.copy(deep=True), df_test.copy(deep=True))
+            model.train(df_train.copy(deep=True))   # , df_test.copy(deep=True)
+            if save_full_pred:
+                args.cv_args.cv_model_name = model_name_base + "_train.txt"
+                predictions = model.predict(df.copy(deep=True), pred_file_name = args.cv_args.cv_model_name)
+                labels = df_test['Prediction'].values
+                rmse_all += compute_rmse(predictions[test_idx], labels)
+
+                if weight_entries:
+                    # get indices that are not predicted correctly
+                    print(os.path.join(args.ens_args.data_ensemble_folder, args.cv_args.cv_model_name))
+                    all_predict = np.loadtxt(os.path.join(args.ens_args.data_ensemble_folder, args.cv_args.cv_model_name))
+                    gt_all = np.array(df['Prediction'].values)
+                    wrong_inds = np.nonzero(np.abs(all_predict - gt_all) > 1.0)
+
+                args.cv_args.cv_model_name = model_name_base + "_test.txt"
+                model.predict(df_submission_test.copy(deep=True), pred_file_name=args.cv_args.cv_model_name)
+            else:
+                predictions = model.predict(df_test)
+                
+                labels = df_test['Prediction'].values
+                rmse_all += compute_rmse(predictions, labels)
 
     rmse_all /= args.cv_args.fold_number
     print('Average RMSE of {} fold: {:.4f}'.format(args.cv_args.fold_number, rmse_all))
