@@ -11,8 +11,8 @@ args:
     max_rate: 5
 
   experiment_args:
-    model_name: "als"
-    model_instance_name: "bfm_reg_rk32_iter1000"
+    model_name: "isvd+als"
+    model_instance_name: "isvd+als"
     generate_submissions: True
     submission_folder: ./output/submission
     save_full_pred: False # True: for cross validation
@@ -32,7 +32,7 @@ args:
     type: "nnr" # svp: Singular Value Projection, nnr: Nuclear Norm Relaxation
     eta: 0.3
     rank: 9
-    shrinkage: 40
+    shrinkage: 37
   svdpp_args:
     n_factors: 3
     lr_all: 0.003

@@ -18,6 +18,7 @@ class ALS_model:
         self.data_ensemble_folder = args.ens_args.data_ensemble_folder
         
     def train(self, df_train, initialization = None):
+        print("Start training ALS model ...")
         np.random.seed(self.seed_value)
         train_data, is_provided = _convert_df_to_matrix(df_train, self.num_users, self.num_items)
         train_data, data_mean, data_std = preprocess(train_data, self.num_users, self.num_items, self.imputation)
@@ -54,6 +55,8 @@ class ALS_model:
                 labels = df_train['Prediction'].values
                 print('Current Train RMSE: {:.4f}'.format(compute_rmse(predictions, labels)))
         self.reconstructed_matrix = postprocess(user_factors @ item_factors, data_mean, data_std)
+
+        print("ALS model training ends. ")
             
     # def update_factors(self, ratings, fixed_factors, update_factors, is_provided, axis, index):
     #     np.random.seed(self.seed_value)

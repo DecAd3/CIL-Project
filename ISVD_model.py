@@ -47,7 +47,7 @@ class ISVD_model:
                 print("Iteration {}/{} finished. ".format(i+1, self.num_iterations))
             self.reconstructed_matrix = At
 
-        print("Training ends. ")
+        print("Iterative-SVD model training ends. ")
 
     def predict(self, df_test, pred_file_name=None):
         if self.args.generate_submissions:

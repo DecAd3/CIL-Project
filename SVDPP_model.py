@@ -26,15 +26,15 @@ class SVDPP_model:
         self.data_ensemble_folder = args.ens_args.data_ensemble_folder
 
     def train(self, df_train):
+        print("Start training SVD++ model ...")
         data = _load_data_for_surprise(df_train)
-
         trainset = data.build_full_trainset()
 
         # create SVDPP algorithm and train it
         algorithm = SVDpp(n_factors=self.n_factors, lr_all=self.lr_all, n_epochs=self.n_epochs,
                            reg_all=self.reg_all, verbose=self.verbose, random_state=self.seed)
         algorithm.fit(trainset)
-        print(' finish training')
+        print('SVD++ model training ends. ')
         self.algo = algorithm
 
     def predict(self, df_test, pred_file_name = None):

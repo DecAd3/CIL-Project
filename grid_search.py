@@ -18,18 +18,33 @@ def grid_search(args):
     # 'kernel': ['linear', 'rbf']
     # }
 
-    # for svd
-    param_grid = {
-        'rank': [7, 8, 9, 10]
-    }
-
-    # for als
-    param_grid = {
-        'svd_rank': [3, 4, 5],
-        'num_iterations': [5, 10, 15],
-        'reg_param': [0.3]
-    }
-    # for xxx
+    if args.model_name == 'svd':
+        param_grid = {
+            'rank': [7, 8, 9, 10]
+        }
+    elif args.model_name == 'isvd':
+        if args.isvd_args.type == 'svp':
+            param_grid = {
+                'num_iterations': [15],
+                'eta': [0.25, 0.3, 0.35],
+                'rank': [8, 9, 10],
+            }
+        elif args.isvd_args.type == 'nnr':
+            param_grid = {
+                'num_iterations': [15],
+                'shrinkage': [36, 37, 38, 39, 40, 41, 42],
+            }
+    elif args.model_name == 'als':
+        param_grid = {
+            'svd_rank': [3, 4, 5],
+            'num_iterations': [5, 10, 15],
+            'reg_param': [0.3],
+        }
+    elif args.model_name == 'isvd+als':
+        param_grid = {
+            'isvd_num_iterations': [15, 20],
+            'als_num_iterations': [5, 10],
+        }
 
     # Create a list of all parameter combinations
     keys, values = zip(*param_grid.items())
@@ -45,22 +60,25 @@ def grid_search(args):
         # change parameters here, if needed
         if args.model_name == 'svd':
             args.svd_args.rank = params['rank']
+        elif args.model_name == 'isvd':
+            args.isvd_args.num_iterations = params['num_iterations']
+            if args.isvd_args.type == 'svp':
+                args.isvd_args.eta = params['eta']
+                args.isvd_args.rank = params['rank']
+            elif args.isvd_args.type == 'nnr':
+                args.isvd_args.shrinkage = params['shrinkage']
         elif args.model_name == 'svdpp':
             args.svdpp_args.n_factors = params['n_factors']
             args.svdpp_args.lr_all = params['lr_all']
             args.svdpp_args.n_epochs = params['n_epochs']
             args.svdpp_args.reg_all = params['reg_all']
-        elif args.model_name == 'isvd':
-            args.isvd_args.num_iterations = params['num_iterations']
-            args.isvd_args.imputation = params['imputation']
-            args.isvd_args.type = params['type']
-            args.isvd_args.eta = params['eta']
-            args.isvd_args.rank = params['rank']
-            args.isvd_args.shrinkage = params['shrinkage']
         elif args.model_name == 'als':
             args.als_args.svd_rank = params['svd_rank']
             args.als_args.num_iterations = params['num_iterations']
             args.als_args.reg_param = params['reg_param']
+        elif args.model_name == 'isvd+als':
+            args.als_args.num_iterations = params['als_num_iterations']
+            args.isvd_args.num_iterations = params['isvd_num_iterations']
         elif args.model_name == 'bfm':
             args.bfm_args.iteration = params['iteration']
             args.bfm_args.dimension = params['dimension']
