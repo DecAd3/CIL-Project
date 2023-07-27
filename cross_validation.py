@@ -44,8 +44,7 @@ def cross_validation(args):
                 # print(wrong_inds[0][:100])
                 # print(weights[:100])
                 weights /= np.sum(weights)
-                random_inds = np.random.choice(len(df), size=len(df) * (
-                            args.cv_args.fold_number - 1) // args.cv_args.fold_number, p=weights, replace=False)
+                random_inds = np.random.choice(len(df), size=int(len(df) * args.cv_args.sample_proportion), p=weights, replace=False)
 
                 df_train = df.iloc[random_inds]
                 train_idx = random_inds

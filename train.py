@@ -131,6 +131,7 @@ def process_config(path):
     args.cv_args.weight_entries = cv_args['weight_entries']
     args.cv_args.full_pred_provided = cv_args['full_pred_provided']
     args.cv_args.full_pred_fn = cv_args['full_pred_fn']
+    args.cv_args.sample_proportion = cv_args['sample_proportion']
     return args
 
 
