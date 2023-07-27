@@ -34,7 +34,7 @@ def cross_validation(args):
         df_train = df.iloc[train_idx.tolist()]
         df_test = df.iloc[test_idx.tolist()]
 
-        # resample df_train: wrong elements arev twice likely to be selected
+        # resample df_train: wrong elements are twice likely to be selected
         if weight_entries and save_full_pred:
             if idx != 0:
                 print("re-sampling data...")
@@ -52,7 +52,7 @@ def cross_validation(args):
                 test_idx = np.setdiff1d(np.arange(len(df)), random_inds)
                 df_test = df.iloc[test_idx.tolist()]
 
-        print('Cross Validation - Fold {}: Number of training sumples: {}, number of test samples: {}.'
+        print('Cross Validation - Fold {}: Number of training samples: {}, number of test samples: {}.'
               .format(idx + 1, len(df_train), len(df_test)))
 
         if args.cv_args.full_pred_provided:

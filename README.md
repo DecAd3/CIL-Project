@@ -26,7 +26,10 @@ python train.py config.yaml
 ### 3.2 Apply grid search to a single model
 #### Check the settings in `config_cv.yaml`:  
 `experiment_args/model_name`: Model name.  
-TODO:
+`experiment_args/generate_submissions`: False.  
+`experiment_args/save_full_pred`: False.  
+#### Check the settings in `grid_search.py`:  
+Modify the parameters in function `grid_search`.  
 #### Run the following command: 
 ```
 python grid_search.py config_cv.yaml
