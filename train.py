@@ -96,8 +96,6 @@ def process_config(path):
     args.ncf_args.n_factors = ncf_args['n_factors']
     args.ncf_args.learning_rate = ncf_args['learning_rate']
     args.ncf_args.train_file = ncf_args['train_file']
-    args.ncf_args.save_file = ncf_args['save_file']
-    args.ncf_args.all_predictions_file = ncf_args['all_predictions_file']
 
     # VAE arguments
     vae_args = data['args']['vae_args']

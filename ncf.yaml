@@ -11,8 +11,8 @@ args:
     max_rate: 5
 
   experiment_args:
-    model_name: "isvd+als"
-    model_instance_name: "isvd+als"
+    model_name: "ncf"
+    model_instance_name: "ncf"
     generate_submissions: True
     submission_folder: ./output/submission
     save_full_pred: False # True: for cross validation
@@ -50,7 +50,7 @@ args:
     BATCH_SIZE: 128
     n_factors: 10 # embedding dimensions for the GMF layer
     learning_rate: 0.001
-    train_file: ./data/ncf/actual.csv
+    train_file: ./data/ncf/actual.csv # intermediate location for saving the training dataset
   vae_args:
     num_iterations: 1000
     batch_size: 1024

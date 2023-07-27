@@ -28,6 +28,9 @@ The result will be in directory `/output/submission`.
 ```
 python train.py config.yaml
 ```
+Config file for NCF: `ncf.yaml` 
+Please note that when training an NCF model, an unfortunate crash might occur randomly due to either a zero-shaped tensor or segmentation fault. If that happens, please simply rerun the training. 
+
 ### 3.2 Apply grid search to a single model
 #### Check the settings in `config_cv.yaml`:  
 `experiment_args/model_name`: Model name.  
