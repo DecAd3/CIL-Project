@@ -12,7 +12,12 @@ pip install -r requirements.txt
 Create a directory `/data`. Then put `data_train.csv` and `sampleSubmission.csv` inside. 
 
 ## 2. Kaggle result reproduction
-TODO: Which files to run/ How to run? Steps. 
+#### Run the following commands: 
+```
+python cross_validation.py config_cv.yaml
+python train.py config.yaml
+```
+The result will be in directory `/output/submission`.  
 
 ## 3. Details implementation
 ### 3.1 Train a single model
@@ -30,7 +35,7 @@ python train.py config.yaml
 `experiment_args/save_full_pred`: False.  
 #### Check the settings in `grid_search.py`:  
 Modify the parameters in function `grid_search`.  
-#### Run the following command: 
+#### Run the following command for grid search: 
 ```
 python grid_search.py config_cv.yaml
 ```
