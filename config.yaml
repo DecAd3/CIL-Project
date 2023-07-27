@@ -71,5 +71,6 @@ args:
     models: ["bfm_op_rk32_iter1000_cv10", "bfm_reg_rk16_iter1000_cv10"] # "bfm_reg_var_500_32", "bfm_op_novar_500_32", "bfm_reg_novar_500_32"
   cv_args:
     weight_entries: False
+    sample_proportion: 0.6 # proportion of training data sampled for each fold
     full_pred_provided: False
     full_pred_fn: "bfm_op_rk32_iter1000"
