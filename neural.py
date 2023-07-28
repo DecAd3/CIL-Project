@@ -22,8 +22,8 @@ class NCF_model:
         self.learning_rate = args.ncf_args.learning_rate
         self.train_file = args.ncf_args.train_file
         self.sample_submission = args.sample_data
-        self.save_file = args.ncf_args.save_file
-        self.all_predictions_file = args.ncf_args.all_predictions_file
+        self.save_file = args.submission_folder
+        # self.all_predictions_file = args.ncf_args.all_predictions_file
         self.model = None
         self.reconstructed = None
         self.data_mean = 0
@@ -85,20 +85,20 @@ class NCF_model:
 
         print("Took {} seconds for training.".format(train_time))
 
-    def predict(self, df_test):
+    def predict(self, df_test, pred_file_name=None):
         print("Predicting...")
         with Timer() as test_time:
             predictions = [[row, col, self.model.predict(row, col)]
                            for (row, col) in itertools.product(np.arange(self.num_users), np.arange(self.num_items))]
 
             predictions = pd.DataFrame(predictions, columns=['userID', 'itemID', 'prediction'])
-            predictions.to_csv(self.all_predictions_file)
+            # predictions.to_csv(self.all_predictions_file)
 
         print("Took {} seconds for prediction.".format(test_time.interval))
 
         print("Reconstructing matrix...")
         self.reconstructed = np.zeros((self.num_users, self.num_items))
-        all_pred = pd.read_csv(self.all_predictions_file)
+        all_pred = predictions.copy(deep=True)
         for ind, row in all_pred.iterrows():
             self.reconstructed[int(row.userID), int(row.itemID)] = row.prediction
 
@@ -112,7 +112,7 @@ class NCF_model:
             return predictions
         else:
             print("Genarating submissions...")
-            generate_submission(self.sample_submission, self.save_file, self.reconstructed)
+            generate_submission(self.sample_submission, self.save_file + "/ncf_submit.csv", self.reconstructed)
 
         return None
 

@@ -1,10 +1,11 @@
 from train import process_config, get_model
-import os 
+import os
 import sys
 import numpy as np
 from utils import _convert_df_to_matrix, preprocess, postprocess, compute_rmse, generate_submission, _read_df_in_format
 from sklearn.model_selection import KFold
 import random
+
 
 def cross_validation(args):
     np.random.seed(args.random_seed)
@@ -21,7 +22,7 @@ def cross_validation(args):
 
     if not os.path.exists(cv_folder):
         os.makedirs(cv_folder)
-    
+
     kf = KFold(n_splits=args.cv_args.fold_number, shuffle=True, random_state=args.random_seed)
     wrong_inds = []
 
@@ -33,7 +34,7 @@ def cross_validation(args):
         df_train = df.iloc[train_idx.tolist()]
         df_test = df.iloc[test_idx.tolist()]
 
-        # resample df_train: wrong elements arev twice likely to be selected
+        # resample df_train: wrong elements are twice likely to be selected
         if weight_entries and save_full_pred:
             if idx != 0:
                 print("re-sampling data...")
@@ -43,13 +44,15 @@ def cross_validation(args):
                 # print(wrong_inds[0][:100])
                 # print(weights[:100])
                 weights /= np.sum(weights)
-                random_inds = np.random.choice(len(df), size=len(df) * (args.cv_args.fold_number - 1) // args.cv_args.fold_number, p=weights, replace=False)
+                random_inds = np.random.choice(len(df), size=int(len(df) * args.cv_args.sample_proportion), p=weights, replace=True)
 
                 df_train = df.iloc[random_inds]
                 train_idx = random_inds
                 test_idx = np.setdiff1d(np.arange(len(df)), random_inds)
+                df_test = df.iloc[test_idx.tolist()]
 
-        print('Cross Validation - Fold {}: Number of training sumples: {}, number of test samples: {}.'.format(idx+1, len(df_train), len(df_test)))
+        print('Cross Validation - Fold {}: Number of training samples: {}, number of test samples: {}.'
+              .format(idx + 1, len(df_train), len(df_test)))
 
         if args.cv_args.full_pred_provided:
             filepath = args.cv_args.cv_folder + "/" + args.cv_args.full_pred_fn + '_fold_' + str(idx) + "_train.txt"
@@ -59,17 +62,18 @@ def cross_validation(args):
         else:
             model_name_base = model_instance_name + "_cv" + str(args.cv_args.fold_number) + '_fold_' + str(idx)
             model = get_model(args, df_train.copy(deep=True), df_test.copy(deep=True))
-            model.train(df_train.copy(deep=True))   # , df_test.copy(deep=True)
+            model.train(df_train.copy(deep=True))  # , df_test.copy(deep=True)
             if save_full_pred:
                 args.cv_args.cv_model_name = model_name_base + "_train.txt"
-                predictions = model.predict(df.copy(deep=True), pred_file_name = args.cv_args.cv_model_name)
+                predictions = model.predict(df.copy(deep=True), pred_file_name=args.cv_args.cv_model_name)
                 labels = df_test['Prediction'].values
                 rmse_all += compute_rmse(predictions[test_idx], labels)
 
                 if weight_entries:
                     # get indices that are not predicted correctly
                     print(os.path.join(args.ens_args.data_ensemble_folder, args.cv_args.cv_model_name))
-                    all_predict = np.loadtxt(os.path.join(args.ens_args.data_ensemble_folder, args.cv_args.cv_model_name))
+                    all_predict = np.loadtxt(
+                        os.path.join(args.ens_args.data_ensemble_folder, args.cv_args.cv_model_name))
                     gt_all = np.array(df['Prediction'].values)
                     wrong_inds = np.nonzero(np.abs(all_predict - gt_all) > 1.0)
 
@@ -77,13 +81,14 @@ def cross_validation(args):
                 model.predict(df_submission_test.copy(deep=True), pred_file_name=args.cv_args.cv_model_name)
             else:
                 predictions = model.predict(df_test)
-                
+
                 labels = df_test['Prediction'].values
                 rmse_all += compute_rmse(predictions, labels)
 
     rmse_all /= args.cv_args.fold_number
     print('Average RMSE of {} fold: {:.4f}'.format(args.cv_args.fold_number, rmse_all))
     return rmse_all
+
 
 if __name__ == '__main__':
     args = process_config(sys.argv[1])

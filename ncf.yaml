@@ -11,11 +11,11 @@ args:
     max_rate: 5
 
   experiment_args:
-    model_name: "isvd+als"    # for cross validation, this name the model to be run for cross validation
-    model_instance_name: "isvd+als"  # for cross validation, this is for the txt name to be saved
-    generate_submissions: False
+    model_name: "ncf"
+    model_instance_name: "ncf"
+    generate_submissions: True
     submission_folder: ./output/submission
-    save_full_pred: False
+    save_full_pred: False # True: for cross validation
     verbose: True
 
   svd_args:
@@ -39,7 +39,7 @@ args:
     n_epochs: 100
     reg_all: 0.05
   bfm_args:
-    algorithm: "regression" # regression, oprobit
+    algorithm: "oprobit" # regression, oprobit
     variational: False
     iteration: 1000 # 500 # 512
     dimension: 16
@@ -48,13 +48,11 @@ args:
   ncf_args:
     EPOCHS: 20
     BATCH_SIZE: 128
-    n_factors: 10
+    n_factors: 10 # embedding dimensions for the GMF layer
     learning_rate: 0.001
-    train_file: ./data/ncf/actual.csv
-    save_file: ./data/ncf/submission_neural.csv
-    all_predictions_file: ./data/ncf/predictions_alle.csv
+    train_file: ./data/ncf/actual.csv # intermediate location for saving the training dataset
   vae_args:
-    num_iterations: 500
+    num_iterations: 1000
     batch_size: 1024
     hidden_dim: 256
     latent_dim: 32
@@ -68,8 +66,9 @@ args:
     shuffle: True
     regressor: 'GradientBoost'
     data_ensemble: './output/data_ensemble/'
-    models: ["bfm_op_novar_500_32", "bfm_reg_novar_500_32"] # "bfm_reg_var_500_32", "bfm_op_novar_500_32", "bfm_reg_novar_500_32"
+    models: ["bfm_op_rk32_iter1000_cv10", "bfm_reg_rk16_iter1000_cv10"] # "bfm_reg_var_500_32", "bfm_op_novar_500_32", "bfm_reg_novar_500_32"
   cv_args:
-    weight_entries: False
+    weight_entries: False # whether to do weighted (ensemble) sampling
+    sample_proportion: 0.6 # proportion of training data sampled for each fold
     full_pred_provided: False
-    full_pred_fn: "bfm_op_rk32_iter1000_cv5"
+    full_pred_fn: "bfm_op_rk32_iter1000"

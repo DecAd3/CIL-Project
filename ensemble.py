@@ -38,7 +38,7 @@ class Ensemble_Model:
         #     return SVR()
         raise ValueError("illegal regressor type provided")
     
-    def obtain_predictions_from_all_models_in_one_ensemble(self, train_indices, test_indices, fold_index, mode = "train"):
+    def obtain_predictions_from_all_models_in_one_ensemble(self, train_indices, test_indices, fold_index, mode="train"):
         pred_train_all = None
         pred_test_all = None
         for model_idx in range(len(self.model_list)):
@@ -85,18 +85,18 @@ class Ensemble_Model:
         #     rmse_total += rmse_local
         # rmse_avg = rmse_total / self.fold_number
         # print('Mean RMSE: {:.4f}'.format(rmse_avg))
-        predict_whole_train = self.predict(df_train, mode = "train")
+        predict_whole_train = self.predict(df_train, mode="train")
         gt_whole_train = df_train['Prediction'].values
         print('RMSE (whole training dataset): {:.4f}'.format(compute_rmse(predict_whole_train, gt_whole_train)))
         rmse_test_all /= (self.fold_number * 1.0)
         print('RMSE (testing average): {:.4f}'.format(rmse_test_all))
 
-    def predict(self, df_test = None, mode = "test"):
+    def predict(self, df_test=None, mode="test"):
         # if self.generate_submissions:
         #     df_test = _read_df_in_format(self.sample_data)
         predict_res = None
         for fold_index in range(self.fold_number):
-            pred, _ = self.obtain_predictions_from_all_models_in_one_ensemble(None, None, fold_index, mode = mode)
+            pred, _ = self.obtain_predictions_from_all_models_in_one_ensemble(None, None, fold_index, mode=mode)
             pred_ins = self.regressors[fold_index].predict(pred)
             if predict_res is None:
                 predict_res = np.empty((pred.shape[0], self.fold_number))
@@ -109,4 +109,4 @@ class Ensemble_Model:
             submission_file = self.submission_folder + '/ensemble_' + self.regressor + "_" + str(self.model_list) + "_" + str (self.fold_number) 
             submission_file += '.csv'
             df.to_csv(submission_file, index=False)
-        return predict_res 
+        return predict_res

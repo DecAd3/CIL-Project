@@ -50,7 +50,7 @@ class VAE_model:
                 print('Epoch: {}/{}'.format(epoch, self.num_iterations))
 
         self.reconstructed_matrix = self.model(data_train, indices_train)[0].detach().numpy()
-        print("Training ends. ")
+        print("VAE model training ends. ")
 
     def predict(self, df_test, pred_file_name=None):
         if self.args.generate_submissions:

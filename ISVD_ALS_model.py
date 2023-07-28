@@ -13,5 +13,5 @@ class ISVD_ALS_model:
         initialization = self.ISVD.obtain_U_VT_as_initialization()
         self.ALS.train(df_train, initialization)
     
-    def predict(self, df_test, save_string = "isvd_als.csv"):
-        self.ALS.predict(df_test)
+    def predict(self, df_test):
+        return self.ALS.predict(df_test)

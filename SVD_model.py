@@ -21,7 +21,7 @@ class SVD_model:
         Sigma[:self.rank, :self.rank] = np.diag(sigma_vec[:self.rank])
         self.reconstructed_matrix = U @ Sigma @ VT * std_train + mean_train
 
-        print("Training ends. ")
+        print("SVD model training ends. ")
 
     def predict(self, df_test, pred_file_name=None):
         if self.args.generate_submissions:
