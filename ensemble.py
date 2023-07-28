@@ -25,15 +25,15 @@ class Ensemble_Model:
         if self.regressor == 'linear':
             return LinearRegression()
         elif self.regressor == 'SGD':
-            return SGDRegressor()
-        elif self.regressor == 'ElasticNet':
-            return ElasticNet()
+            return SGDRegressor(random_state=self.seed_value)
+        # elif self.regressor == 'ElasticNet':
+        #     return ElasticNet()
         elif self.regressor == 'BayesianRidge':
             return BayesianRidge()
         # elif self.regressor == 'KernelRidge':
         #     return KernelRidge()
         elif self.regressor == 'GradientBoost':
-            return GradientBoostingRegressor()
+            return GradientBoostingRegressor(random_state=self.seed_value)    # learning_rate=0.15, , n_estimators = 100
         # elif self.regressor == 'SVR':
         #     return SVR()
         raise ValueError("illegal regressor type provided")
