@@ -15,17 +15,17 @@ args:
     model_instance_name: "isvd+als"
     generate_submissions: True
     submission_folder: ./output/submission
-    save_full_pred: False # True: for cross validation
+    save_full_pred: False                   # Whether to save K-fold full predictions. Primarily for ensemble purpose. If you are to train an ensemble, set it to True when running cross_validation.py
     verbose: True
 
   svd_args:
-    imputation: "zero"
-    rank: 9
+    imputation: "zero"  # SVD algorithm should use zero imputation by our settings.
+    rank: 9             
   als_args:
-    imputation: "zero"
-    num_iterations: 5
-    reg_param: 0.3
-    latent_dim: 3
+    imputation: "zero"  # ALS algorithm should use zero imputation by our settings.
+    num_iterations: 5   # Number of iterations.
+    reg_param: 0.3      # Regulation parameter lambda.
+    latent_dim: 3       # Latent dimension k. 
   isvd_args:
     imputation: "mean"
     num_iterations: 15
@@ -39,12 +39,12 @@ args:
     n_epochs: 100
     reg_all: 0.05
   bfm_args:
-    algorithm: "oprobit" # regression, oprobit
-    variational: False
-    iteration: 1000 # 500 # 512
-    dimension: 16
-    use_iu: True
-    use_ii: True
+    algorithm: "oprobit"  # Values: "regression" or "oprobit". Problem formulation as normal regression or ordinal regression.
+    variational: False    # Whether to use variational regressor; only applicable when algorithm is "regression".
+    iteration: 1000       # Number of iterations.
+    dimension: 32         # Latent dimension. Default: 16 for "regression" and 32 for "oprobit".
+    use_iu: True          # Whether to use user-related implicit features: movies the user watched.
+    use_ii: True          # Whether to use item(movie)-related implicit features: users watched the movie.
   ncf_args:
     EPOCHS: 20
     BATCH_SIZE: 128
@@ -62,13 +62,13 @@ args:
     gamma: 0.997
     beta: 0.2
   ensemble_args:
-    fold_number: 5
-    shuffle: True
-    regressor: 'GradientBoost'
-    data_ensemble: './output/data_ensemble/'
-    models: ["bfm_op_rk32_iter1000_cv10", "bfm_reg_rk16_iter1000_cv10"] # "bfm_reg_var_500_32", "bfm_op_novar_500_32", "bfm_reg_novar_500_32"
+    fold_number: 10       # Fold number for ensemble, also for cross validation.
+    shuffle: True         # Whether to shuffle the data when dividing the data into K fold.
+    regressor: 'GradientBoost'                # Regressor type for blending.
+    data_ensemble: './output/data_ensemble/'  # Path for saving K-fold full training&testing prediction results
+    models: ["bfm_op_rk32_iter1000_cv10", "bfm_reg_rk16_iter1000_cv10"] # Model instance used for blending. The K-fold prediction results are save in format "[prefix]_fold_x_train/test.txt", enter prefix string here.
   cv_args:
     weight_entries: False # whether to do weighted (ensemble) sampling
     sample_proportion: 0.6 # proportion of training data sampled for each fold
-    full_pred_provided: False
-    full_pred_fn: "bfm_op_rk32_iter1000"
+    full_pred_provided: False                 # If K-fold prediction results txt are provided, can use them directly to compute the cross validation rmse
+    full_pred_fn: "bfm_op_rk32_iter1000_cv10"      # Full prediction txt file prefix string as stated in ensemble_args/models arguments
