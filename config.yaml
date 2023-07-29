@@ -34,10 +34,10 @@ args:
     rank: 9             # Rank of the low-rank matrix, used for SVP.
     shrinkage: 37       # Shrinkage value, used for NNR.
   svdpp_args:
-    n_factors: 3
-    lr_all: 0.003
-    n_epochs: 100
-    reg_all: 0.05
+    n_factors: 3        # Rank of the low-rank matrix (When we decompose a m*n matrix into m*k and n*k, this is the k).
+    lr_all: 0.003       # Learning rate for all the parameters (bu, bi, pu, qi, yj)
+    n_epochs: 100       # Number of iterations.
+    reg_all: 0.05       # Regularization weight for all the parameters (bu, bi, pu, qi, yj)
   bfm_args:
     algorithm: "oprobit"  # Values: "regression" or "oprobit". Problem formulation as normal regression or ordinal regression.
     variational: False    # Whether to use variational regressor; only applicable when algorithm is "regression".
