@@ -11,28 +11,28 @@ args:
     max_rate: 5
 
   experiment_args:
-    model_name: "isvd+als"
-    model_instance_name: "isvd+als"
-    generate_submissions: True
-    submission_folder: ./output/submission
-    save_full_pred: False                   # Whether to save K-fold full predictions. Primarily for ensemble purpose. If you are to train an ensemble, set it to True when running cross_validation.py
+    model_name: "svd"   # Values: "svd", "isvd", "svdpp", "als", "isvd+als", "ncf", "vae", "bfm", "ensemble".
+    model_instance_name: "svd"
+    generate_submissions: True   # Whether to generate the final prediction in a csv file.
+    submission_folder: ./output/submission   # The csv file is generated here.
+    save_full_pred: False   # Whether to save K-fold full predictions. Primarily for ensemble purpose. If you are to train an ensemble, set it to True when running cross_validation.py.
     verbose: True
 
   svd_args:
     imputation: "zero"  # SVD algorithm should use zero imputation by our settings.
-    rank: 9             
+    rank: 9             # Rank of the low-rank matrix.
   als_args:
     imputation: "zero"  # ALS algorithm should use zero imputation by our settings.
     num_iterations: 5   # Number of iterations.
     reg_param: 0.3      # Regulation parameter lambda.
-    latent_dim: 3       # Latent dimension k. 
+    latent_dim: 3       # Latent dimension k.
   isvd_args:
-    imputation: "mean"
-    num_iterations: 15
-    type: "nnr" # svp: Singular Value Projection, nnr: Nuclear Norm Relaxation
-    eta: 0.3
-    rank: 9
-    shrinkage: 37
+    imputation: "mean"  # ISVD algorithm should use mean imputation by our settings.
+    num_iterations: 15  # Number of iterations.
+    type: "nnr"         # Values: "svp" or "nnr". "svp": Singular Value Projection, "nnr": Nuclear Norm Relaxation.
+    eta: 0.3            # Learning rate, used for SVP.
+    rank: 9             # Rank of the low-rank matrix, used for SVP.
+    shrinkage: 37       # Shrinkage value, used for NNR.
   svdpp_args:
     n_factors: 3
     lr_all: 0.003
@@ -48,27 +48,27 @@ args:
   ncf_args:
     EPOCHS: 20
     BATCH_SIZE: 128
-    n_factors: 10 # embedding dimensions for the GMF layer
+    n_factors: 10         # Embedding dimensions for the GMF layer
     learning_rate: 0.001
     train_file: ./data/ncf/actual.csv
   vae_args:
-    num_iterations: 1000
-    batch_size: 1024
-    hidden_dim: 256
-    latent_dim: 32
-    dropout: 0.5
-    lr: 0.025
-    weight_decay: 0
-    gamma: 0.997
-    beta: 0.2
+    num_iterations: 1000  # Number of iterations.
+    batch_size: 1024      # Batch size.
+    hidden_dim: 256       # Dimension of hidden layers.
+    latent_dim: 32        # Dimension of latent layer.
+    dropout: 0.5          # Dropout.
+    lr: 0.025             # Learning rate, used for optimizer.
+    weight_decay: 0       # Weight decay, used for optimizer.
+    gamma: 0.996          # Gamma, used for scheduler.
+    beta: 0.2             # The coefficient to balance reconstruction loss and KL loss.
   ensemble_args:
     fold_number: 10       # Fold number for ensemble, also for cross validation.
     shuffle: True         # Whether to shuffle the data when dividing the data into K fold.
     regressor: 'GradientBoost'                # Regressor type for blending.
-    data_ensemble: './output/data_ensemble/'  # Path for saving K-fold full training&testing prediction results
+    data_ensemble: './output/data_ensemble/'  # Path for saving K-fold full training&testing prediction results.
     models: ["bfm_op_rk32_iter1000_cv10", "bfm_reg_rk16_iter1000_cv10"] # Model instance used for blending. The K-fold prediction results are save in format "[prefix]_fold_x_train/test.txt", enter prefix string here.
   cv_args:
-    weight_entries: False # whether to do weighted (ensemble) sampling
-    sample_proportion: 0.6 # proportion of training data sampled for each fold
-    full_pred_provided: False                 # If K-fold prediction results txt are provided, can use them directly to compute the cross validation rmse
-    full_pred_fn: "bfm_op_rk32_iter1000_cv10"      # Full prediction txt file prefix string as stated in ensemble_args/models arguments
+    weight_entries: False      # Whether to do weighted (ensemble) sampling.
+    sample_proportion: 0.6     # Proportion of training data sampled for each fold.
+    full_pred_provided: False  # If K-fold prediction results txt are provided, can use them directly to compute the cross validation rmse.
+    full_pred_fn: "bfm_op_rk32_iter1000_cv10"  # Full prediction txt file prefix string as stated in ensemble_args/models arguments.

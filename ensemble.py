@@ -74,7 +74,6 @@ class Ensemble_Model:
             gt_train = df_train_fold['Prediction'].values
             gt_test = df_test_fold['Prediction'].values
             reg = self.get_regressor().fit(pred_test_all, gt_test)
-            # reg = self.get_regressor().fit(pred_train_all, gt_train)
             self.regressors.append(reg)
             testing_test = reg.predict(pred_test_all)
             testing_train = reg.predict(pred_train_all) 
