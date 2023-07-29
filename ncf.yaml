@@ -46,11 +46,11 @@ args:
     use_iu: True
     use_ii: True
   ncf_args:
-    EPOCHS: 20
-    BATCH_SIZE: 128
-    n_factors: 10 # embedding dimensions for the GMF layer
-    learning_rate: 0.001
-    train_file: ./data/ncf/actual.csv # intermediate location for saving the training dataset
+    EPOCHS: 20 # number of epochs
+    BATCH_SIZE: 128 # batch size
+    n_factors: 3 # embedding dimensions for the GMF layer
+    learning_rate: 0.001 # learning rate
+    train_file: ./data/actual.csv # intermediate location for saving the training dataset ()
   vae_args:
     num_iterations: 1000
     batch_size: 1024
