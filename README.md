@@ -32,7 +32,6 @@ python train.py config_submission_ensemble.yaml
 ```
 python train.py config.yaml
 ```
-Config file for NCF: `ncf.yaml` 
 Please note that when training an NCF model, an unfortunate crash might occur randomly due to either a zero-shaped tensor or segmentation fault. If that happens, please simply rerun the training. 
 
 ### 3.2 Apply cross validation to a single model
