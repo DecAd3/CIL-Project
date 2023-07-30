@@ -64,5 +64,6 @@ class ISVD_model:
         return None
 
     def obtain_U_VT_as_initialization(self):
+        # This function is used for the combined method ISVD+ALS.
         U, sigma_vec, VT = np.linalg.svd(self.reconstructed_matrix)
         return [U, VT]

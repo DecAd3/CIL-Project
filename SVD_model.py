@@ -7,17 +7,19 @@ class SVD_model:
         self.args = args
         self.rank = args.svd_args.rank
         self.imputation = args.svd_args.imputation
+        self.num_users = args.num_users
+        self.num_items = args.num_items
         self.save_full_pred = args.cv_args.save_full_pred
         self.cv_model_name = args.cv_args.cv_model_name
         self.data_ensemble_folder = args.ens_args.data_ensemble_folder
 
     def train(self, df_train):
         print("Start training SVD model ...")
-        data_train, _ = _convert_df_to_matrix(df_train, 10000, 1000)
-        data_train, mean_train, std_train = preprocess(data_train, 10000, 1000, self.imputation)
+        data_train, _ = _convert_df_to_matrix(df_train, self.num_users, self.num_items)
+        data_train, mean_train, std_train = preprocess(data_train, self.num_users, self.num_items, self.imputation)
 
         U, sigma_vec, VT = np.linalg.svd(data_train, full_matrices=False)
-        Sigma = np.zeros((1000, 1000))
+        Sigma = np.zeros((self.num_items, self.num_items))
         Sigma[:self.rank, :self.rank] = np.diag(sigma_vec[:self.rank])
         self.reconstructed_matrix = U @ Sigma @ VT * std_train + mean_train
 
