@@ -87,3 +87,7 @@ python cross_validation.py config_cv.yaml
 python train.py config.yaml
 ```
 
+## Code References
+1. MyFM library: https://github.com/tohtsky/myFM
+2. Surprise library: https://surpriselib.com/
+3. Microsoft Recommenders library: https://github.com/microsoft/recommenders/
