@@ -11,8 +11,8 @@ args:
     max_rate: 5
 
   experiment_args:
-    model_name: "svd"   # Values: "svd", "isvd", "svdpp", "als", "isvd+als", "ncf", "vae", "bfm", "ensemble".
-    model_instance_name: "svd"    # Model prefix for saving K-fold full predictions in cross validation for ensemble
+    model_name: "bfm"   # Values: "svd", "isvd", "svdpp", "als", "isvd+als", "ncf", "vae", "bfm", "ensemble".
+    model_instance_name: "bfm_reg_rk16_iter1000"    # Model prefix for saving K-fold full predictions in cross validation for ensemble
     generate_submissions: False    # Whether to generate the final prediction in a csv file.
     submission_folder: ./output/submission   # The csv file is generated here.
     save_full_pred: True   # Whether to save K-fold full predictions. Primarily for ensemble purpose. If you are to train an ensemble, set it to True when running cross_validation.py.
@@ -39,10 +39,10 @@ args:
     n_epochs: 100       # Number of iterations.
     reg_all: 0.05       # Regularization weight for all the parameters (bu, bi, pu, qi, yj)
   bfm_args:
-    algorithm: "oprobit"  # Values: "regression" or "oprobit". Problem formulation as normal regression or ordinal regression.
+    algorithm: "regression"  # Values: "regression" or "oprobit". Problem formulation as normal regression or ordinal regression.
     variational: False    # Whether to use variational regressor; only applicable when algorithm is "regression".
     iteration: 1000       # Number of iterations.
-    dimension: 32         # Latent dimension. Default: 16 for "regression" and 32 for "oprobit".
+    dimension: 16         # Latent dimension. Default: 16 for "regression" and 32 for "oprobit".
     use_iu: True          # Whether to use user-related implicit features: movies the user watched.
     use_ii: True          # Whether to use item(movie)-related implicit features: users watched the movie.
   ncf_args:

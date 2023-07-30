@@ -11,11 +11,11 @@ args:
     max_rate: 5
 
   experiment_args:
-    model_name: "svd"   # Values: "svd", "isvd", "svdpp", "als", "isvd+als", "ncf", "vae", "bfm", "ensemble".
+    model_name: "ensemble"   # Values: "svd", "isvd", "svdpp", "als", "isvd+als", "ncf", "vae", "bfm", "ensemble".
     model_instance_name: "svd"    # Model prefix for saving K-fold full predictions in cross validation for ensemble
-    generate_submissions: False    # Whether to generate the final prediction in a csv file.
+    generate_submissions: True    # Whether to generate the final prediction in a csv file.
     submission_folder: ./output/submission   # The csv file is generated here.
-    save_full_pred: True   # Whether to save K-fold full predictions. Primarily for ensemble purpose. If you are to train an ensemble, set it to True when running cross_validation.py.
+    save_full_pred: False   # Whether to save K-fold full predictions. Primarily for ensemble purpose. If you are to train an ensemble, set it to True when running cross_validation.py.
     verbose: True
 
   svd_args:
