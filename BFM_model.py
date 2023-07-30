@@ -17,9 +17,12 @@ from myfm.utils.encoders import CategoryValueToSparseEncoder
 
 from utils import _load_data_for_BFM, _read_df_in_format, compute_rmse
 
+# Code for BFM model
+# Code is adapted from
+# https://github.com/tohtsky/myFM/blob/main/examples/ml-100k-regression.py
+# https://github.com/tohtsky/myFM/blob/main/examples/ml-100k-extended.ipynb
 class BFM_model:
     def __init__(self, args):
-        # no fold index
         self.algorithm = args.bfm_args.algorithm    # ["regression", "oprobit"]
         self.iteration = args.bfm_args.iteration    # mcmc iterations
         self.dimension = args.bfm_args.dimension    # fm embedding dimension
@@ -41,6 +44,7 @@ class BFM_model:
         self.movie_to_internal = None
         self.user_to_internal = None
 
+    # given user/movie ids, add additional infos and return it as sparse
     def augment_user_id(self, user_ids: List[int]) -> sps.csr_matrix:
             X = self.user_to_internal.to_sparse(user_ids)
             if not self.use_iu:
@@ -92,13 +96,9 @@ class BFM_model:
                 ]
             )
     
-    def train(self, df_train):  # , df_test = None
-        # self.df_train = df_train.copy(deep = True)
+    def train(self, df_train):
         np.random.seed(self.seed_value)
-        # df_train = self.df_train
         df_train = _load_data_for_BFM(df_train)
-        # if df_test is not None:
-        #     df_test = _load_data_for_BFM(df_test)
         
         if self.algorithm == "oprobit":
             # interpret the rating (1, 2, 3, 4, 5) as class (0, 1, 2, 3, 4).
@@ -115,7 +115,7 @@ class BFM_model:
         )
 
         print(
-            "df_train.shape = {}".format(df_train.shape)    # , df_test.shape
+            "df_train.shape = {}".format(df_train.shape)
         )
 
         movie_vs_watched: Dict[int, List[int]] = dict()
@@ -159,6 +159,7 @@ class BFM_model:
             unique_movies, movie_map = np.unique(source.movie_id, return_inverse=True)
             target.append(RelationBlock(movie_map, self.augment_movie_id(unique_movies)))
 
+        # Regressor Block Generation
         callback: LibFMLikeCallbackBase
         fm: Union[MyFMRegressor, MyFMOrderedProbit]
         callback = None
@@ -167,27 +168,10 @@ class BFM_model:
                 fm = myfm.VariationalFMRegressor(rank=self.dimension, random_seed=self.seed_value)
             else:
                 fm = myfm.MyFMRegressor(rank=self.dimension, random_seed=self.seed_value)
-            # if df_test is not None: # not self.generate_submissions and pred_file_name is None:
-            #     callback = RegressionCallback(
-            #         self.iteration,
-            #         None,
-            #         df_test.rating.values,
-            #         X_rel_test=test_blocks,
-            #         clip_min=self.min_rate,
-            #         clip_max=self.max_rate,
-            #     )
         else:
             if self.variational:
                 raise ValueError('Variational infrence for ordinal regression is not available.')
             fm = myfm.MyFMOrderedProbit(rank=self.dimension, random_seed=self.seed_value)
-            # if df_test is not None:# not self.generate_submissions and pred_file_name is None:
-            #     callback = OrderedProbitCallback(
-            #         self.iteration,
-            #         None,
-            #         df_test.rating.values,
-            #         n_class=5,
-            #         X_rel_test=test_blocks,
-            #     )
 
         fm.fit(
             None,   # auxilliary feature
