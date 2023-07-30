@@ -50,7 +50,7 @@ args:
     BATCH_SIZE: 128 # batch size
     n_factors: 3 # embedding dimensions for the GMF layer
     learning_rate: 0.001 # learning rate
-    train_file: ./data/actual.csv # intermediate location for saving the training dataset ()
+    train_file: ./data/actual.csv # intermediate saving path for NCF training dataloader. No need to modify.
   vae_args:
     num_iterations: 1000
     batch_size: 1024
