@@ -80,6 +80,12 @@ python cross_validation.py config_cv.yaml
 `ensemble_args/fold_number`: Fold number, should be the same as that used for cross validation results generation
 `ensemble_args/regressor`: "linear", "SGD", "BayesianRidge", "GradientBoost". Regressor type for blending.
 `ensemble_args/models`: List of model instances used for blending. The K-fold prediction results are save in format "\[prefix\]_fold_x_train/test.txt", enter prefix string here.
+##### If you want to apply weighted sampling, in addition, please make sure:
+1. `cv_args/weight_entries`: "True"
+2. `cv_args/sample_proportion`: Proportion of training data sampled for each fold
+3. `ensemble_args/fold_number` (recommended) a large number of folds
+4. (recommended) if possible, set the model you are running into a simple structure. e.g., low-rank
+
 
 #### Run the following command for ensemble:
 ```
